@@ -2,7 +2,7 @@ import { assertEquals } from "jsr:@std/assert";
 import { InstructionType, Parser } from "./parser.ts";
 import { afterEach, beforeEach, describe, it } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect";
-const filePath = "./Add.asm";
+const filePath = "./ParserTest.asm";
 
 describe("Parser", () => {
     let sut: Parser;
