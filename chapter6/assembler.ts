@@ -1,7 +1,10 @@
 import { Code } from "./code.ts";
 import { InstructionType, Parser } from "./parser.ts";
+import { SymbolTable } from "./test_files/symbol_table.ts";
 
 export class Assembler {
+    private symbolTable = new SymbolTable();
+
     public async run(
         inputFilePath: string,
         outputFilePath: string,
@@ -59,5 +62,31 @@ export class Assembler {
             await parser.advance();
             firstLine = false;
         }
+    }
+
+    public async preProcess(inputFilePath: string): Promise<void> {
+        const inputFile = await Deno.open(inputFilePath);
+        const parser = new Parser(inputFile);
+        await parser.initialize();
+        let curLine = 0;
+
+        while (parser.hasMoreLines()) {
+            if (parser.hasSymbol()) {
+                if (
+                    parser.instructionType() === InstructionType.L_INSTRUCTION
+                ) {
+                    this.symbolTable.storeLabel(parser.symbol(), curLine + 1);
+                }
+                if (
+                    parser.instructionType() === InstructionType.A_INSTRUCTION
+                ) {
+                    this.symbolTable.storeVar(parser.symbol());
+                }
+            }
+            parser.advance();
+            curLine++;
+        }
+
+        console.log(this.symbolTable.getTable());
     }
 }

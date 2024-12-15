@@ -10,7 +10,7 @@ describe("Assembler", () => {
     });
 
     describe("No Symbols", () => {
-        it.only("should assemble Add correctly", async () => {
+        it("should assemble Add correctly", async () => {
             const inputPath = "./test_files/Add.asm";
             const outputPath = "./output/Add.hack";
 

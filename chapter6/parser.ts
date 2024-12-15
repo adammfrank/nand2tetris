@@ -57,6 +57,11 @@ export class Parser {
         }
     }
 
+    public hasSymbol(): boolean {
+        const value = this.currentValue!.value as string;
+        return value.indexOf("@") !== -1 || value.indexOf("(") !== -1;
+    }
+
     public symbol(): string {
         const value = this.currentValue!.value as string;
         if (this.instructionType() === InstructionType.C_INSTRUCTION) {
@@ -72,7 +77,9 @@ export class Parser {
 
         const value = this.currentValue!.value as string;
         const firstEqualsPosition = value.indexOf("=");
-        return value.slice(0, firstEqualsPosition).trim();
+        return (firstEqualsPosition != -1)
+            ? value.slice(0, firstEqualsPosition).trim()
+            : "null";
     }
 
     public comp(): string {
