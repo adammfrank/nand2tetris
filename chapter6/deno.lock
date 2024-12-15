@@ -47,6 +47,11 @@
       ]
     }
   },
+  "remote": {
+    "https://deno.land/x/diff_kit@v2.0.5/mod.ts": "3d88f6b8132feabe4c0863a5c65fdad05d44d52488de91205fc76abcbfd2eadd",
+    "https://deno.land/x/diff_kit@v2.0.5/private/diff.ts": "bc270998702ba73c8d2b1810feb54d3973615ce56a33d2ec64432e698f2f2613",
+    "https://deno.land/x/diff_kit@v2.0.5/private/diff_handler.ts": "2f96831bde217d6a84691abfe7d4580057aee4e9fe1cf753101a2eb703cef9aa"
+  },
   "workspace": {
     "dependencies": [
       "jsr:@std/streams@^1.0.8"

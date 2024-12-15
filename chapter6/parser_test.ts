@@ -93,7 +93,7 @@ describe("Parser", () => {
     });
 
     describe("comp", () => {
-        it("should get dest of C_INSTRUCTION", async () => {
+        it("should get comp of C_INSTRUCTION", async () => {
             await sut.advance();
             await sut.advance();
             expect(sut.comp()).toStrictEqual("A");
@@ -116,6 +116,12 @@ describe("Parser", () => {
         it("should throw on A_INSTRUCTION", async () => {
             await sut.advance();
             expect(() => sut.comp()).toThrow(Error);
+        });
+
+        it('should return "null" if there is no jump', async () => {
+            await sut.advance();
+            await sut.advance();
+            expect(sut.jump()).toStrictEqual("null");
         });
     });
 });

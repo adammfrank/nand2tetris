@@ -53,14 +53,28 @@ export const compTable: Record<string, string> = {
 
 export class Code {
     public dest(input: keyof typeof destTable): string {
-        return destTable[input];
+        const result = destTable[input];
+        if (result === undefined) {
+            console.log(`Dest: Input:${input} Mapping:${result}`);
+        }
+        return result;
     }
 
     public comp(input: keyof typeof compTable): string {
-        return compTable[input];
+        const result = compTable[input];
+        if (result === undefined) {
+            console.log(`Comp: Input:${input} Mapping:${result}`);
+        }
+
+        return result;
     }
 
     public jump(input: keyof typeof jumpTable): string {
-        return jumpTable[input];
+        const result = jumpTable[input];
+        if (result === undefined) {
+            console.log(`Jump: Input:${input} Mapping:${result}`);
+        }
+
+        return result;
     }
 }

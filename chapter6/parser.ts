@@ -16,15 +16,19 @@ export class Parser {
     }
 
     public async initialize(): Promise<void> {
-        this.currentValue = await this.values.next();
+        await this.advance();
     }
 
     public async printAllValues(): Promise<void> {
         let value = await this.values.next();
         while (value.done !== true) {
-            console.log(value.value);
             value = await this.values.next();
         }
+    }
+
+    public printCurrentValue(): string {
+        console.log("Current Value: " + this.currentValue?.value);
+        return this.currentValue?.value;
     }
 
     public hasMoreLines(): boolean {
@@ -44,9 +48,9 @@ export class Parser {
 
     public instructionType(): InstructionType {
         const value = this.currentValue!.value as string;
-        if (value.startsWith("@")) {
+        if (value.match(/^\s*@\w+/)) {
             return InstructionType.A_INSTRUCTION;
-        } else if (value.startsWith("(")) {
+        } else if (value.match(/^\s*\(\w+/)) {
             return InstructionType.L_INSTRUCTION;
         } else {
             return InstructionType.C_INSTRUCTION;
@@ -63,31 +67,58 @@ export class Parser {
 
     public dest(): string {
         if (this.instructionType() !== InstructionType.C_INSTRUCTION) {
-            throw new Error("Attempting to get symbol of C_INSTRUCTION");
+            throw new Error("Attempting to get dest of A_INSTRUCTION");
         }
 
         const value = this.currentValue!.value as string;
         const firstEqualsPosition = value.indexOf("=");
-        return value.slice(0, firstEqualsPosition);
+        return value.slice(0, firstEqualsPosition).trim();
     }
 
     public comp(): string {
         if (this.instructionType() !== InstructionType.C_INSTRUCTION) {
-            throw new Error("Attempting to get symbol of C_INSTRUCTION");
+            throw new Error("Attempting to get comp of A_INSTRUCTION");
         }
 
         const value = this.currentValue!.value as string;
         const firstEqualsPosition = value.indexOf("=");
-        return value.slice(firstEqualsPosition + 1, value.length);
+        const firstSemiPosition = value.indexOf(";");
+
+        // dest = comp ; jump
+        if (firstEqualsPosition !== -1 && firstSemiPosition !== -1) {
+            return value.substring(firstEqualsPosition + 1, firstSemiPosition)
+                .trim();
+        }
+
+        // dest = comp
+        if (firstEqualsPosition !== -1 && firstSemiPosition === -1) {
+            return value.substring(firstEqualsPosition + 1)
+                .trim();
+        }
+
+        // comp ; jump
+        if (firstEqualsPosition === -1 && firstSemiPosition !== -1) {
+            return value.substring(0, firstSemiPosition)
+                .trim();
+        }
+        // comp
+        if (firstEqualsPosition === -1 && firstSemiPosition === -1) {
+            return value.trim();
+        }
+
+        return value.trim();
     }
 
     public jump(): string {
         if (this.instructionType() !== InstructionType.C_INSTRUCTION) {
-            throw new Error("Attempting to get symbol of C_INSTRUCTION");
+            throw new Error("Attempting to get jump of A_INSTRUCTION");
         }
 
         const value = this.currentValue!.value as string;
         const semiColonPosition = value.indexOf(";");
-        return value.slice(semiColonPosition + 1, value.length);
+        if (semiColonPosition === -1) {
+            return "null";
+        }
+        return value.slice(semiColonPosition + 1, value.length).trim();
     }
 }
