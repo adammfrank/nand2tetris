@@ -28,11 +28,17 @@ export class SymbolTable {
     private currentVarAddr = 16;
 
     public storeVar(variable: string): void {
+        if (this.table[variable]) return;
         this.table[variable] = this.currentVarAddr.toString();
         this.currentVarAddr++;
     }
     public storeLabel(label: string, value: number): void {
+        if (this.table[label]) return;
         this.table[label] = value.toString();
+    }
+
+    public getSymbol(symbol: string): string {
+        return this.table[symbol];
     }
 
     public getTable(): Record<string, string> {

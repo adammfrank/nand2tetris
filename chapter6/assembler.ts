@@ -21,15 +21,22 @@ export class Assembler {
         let firstLine = true;
         while (parser.hasMoreLines()) {
             const instructionType = parser.instructionType();
-            if (!firstLine) {
+            if (
+                !firstLine && instructionType !== InstructionType.L_INSTRUCTION
+            ) {
                 await Deno.writeTextFile(outputFilePath, "\n", {
                     append: true,
                 });
             }
             switch (instructionType) {
-                case InstructionType.L_INSTRUCTION:
                 case InstructionType.A_INSTRUCTION: {
-                    const symbol = parser.symbol();
+                    let symbol = parser.symbol();
+
+                    // Convert variable and label symbols after preprocessing
+                    if (symbol.match(/[^0-9]/)) {
+                        this.symbolTable.storeVar(parser.symbol());
+                        symbol = this.symbolTable.getSymbol(symbol);
+                    }
                     const binary = parseInt(symbol).toString(2).padStart(
                         16,
                         "0",
@@ -43,10 +50,6 @@ export class Assembler {
                     const dest = parser.dest();
                     const comp = parser.comp();
                     const jump = parser.jump();
-
-                    // console.log(`COMP ${comp} : ${code.comp(comp)}`);
-                    // console.log(`DEST ${dest} : ${code.dest(dest)}`);
-                    // console.log(`JUMP ${jump} : ${code.jump(jump)}`);
 
                     const binary = "111" +
                         code.comp(comp) +
@@ -71,22 +74,13 @@ export class Assembler {
         let curLine = 0;
 
         while (parser.hasMoreLines()) {
-            if (parser.hasSymbol()) {
-                if (
-                    parser.instructionType() === InstructionType.L_INSTRUCTION
-                ) {
-                    this.symbolTable.storeLabel(parser.symbol(), curLine + 1);
-                }
-                if (
-                    parser.instructionType() === InstructionType.A_INSTRUCTION
-                ) {
-                    this.symbolTable.storeVar(parser.symbol());
-                }
+            if (parser.instructionType() === InstructionType.L_INSTRUCTION) {
+                const labelLine = curLine;
+                this.symbolTable.storeLabel(parser.symbol(), labelLine);
+            } else {
+                curLine++;
             }
-            parser.advance();
-            curLine++;
+            await parser.advance();
         }
-
-        console.log(this.symbolTable.getTable());
     }
 }

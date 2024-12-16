@@ -67,7 +67,7 @@ export class Parser {
         if (this.instructionType() === InstructionType.C_INSTRUCTION) {
             throw new Error("Attempting to get symbol of C_INSTRUCTION");
         }
-        return value.replaceAll("@", "").replaceAll(/[\(\)]/g, "");
+        return value.replaceAll("@", "").replaceAll(/[\(\)]/g, "").trim();
     }
 
     public dest(): string {
