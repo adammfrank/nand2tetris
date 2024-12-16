@@ -71,5 +71,17 @@ describe("Assembler", () => {
 
             expect(actual).toStrictEqual(expected);
         });
+        it("should assemble Pong correctly", async () => {
+            const inputPath = "./test_files/Pong.asm";
+            const outputPath = "./output/Pong.hack";
+
+            await sut.preProcess(inputPath);
+            await sut.run(inputPath, outputPath);
+
+            const expected = await Deno.readTextFile("./test_files/Pong.hack");
+            const actual = await Deno.readTextFile(outputPath);
+
+            expect(actual).toStrictEqual(expected);
+        });
     });
 });
