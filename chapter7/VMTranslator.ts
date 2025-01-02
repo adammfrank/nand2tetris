@@ -11,8 +11,10 @@ export class VMTranslator {
         const parser = new Parser(inputFile);
         const codeWriter = new CodeWriter(outputFilePath);
 
+        await parser.advance();
+
         while (await parser.hasMoreLines()) {
-            const curValue = await parser.advance();
+            const curValue = parser.currentValue?.value;
             if (parser.commandType() === CommandType.C_ARITHMETIC) {
                 await codeWriter.writeArithmetic(curValue);
             }
@@ -30,6 +32,7 @@ export class VMTranslator {
                     parseInt(splitCommand[2]),
                 );
             }
+            await parser.advance();
         }
     }
 }

@@ -29,7 +29,7 @@ const commands: Record<string, CommandType> = {
 
 export class Parser {
     private values: AsyncIterableIterator<string>;
-    private currentValue: IteratorResult<string> | null = null;
+    public currentValue: IteratorResult<string> | null = null;
     constructor(file: Deno.FsFile) {
         this.values = file.readable
             .pipeThrough(new TextDecoderStream()) // decode Uint8Array to string
