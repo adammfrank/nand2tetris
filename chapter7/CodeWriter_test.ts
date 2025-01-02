@@ -3,8 +3,12 @@ import { CodeWriter } from "./CodeWriter.ts";
 import { expect } from "jsr:@std/expect/expect";
 import { CommandType } from "./Parser.ts";
 
+Deno.test("hello", () => {
+    expect(true).toBe(true);
+});
+
 describe("CodeWriter", () => {
-    const outputPath = "./test_files/output/CodeWriter.vm";
+    const outputPath = "./test_files/output/CodeWriter.asm";
     let sut: CodeWriter;
     beforeEach(async () => {
         sut = new CodeWriter(outputPath);
@@ -27,7 +31,7 @@ describe("CodeWriter", () => {
             M=M+1
             `;
             const actual = await Deno.readTextFile(
-                "./test_files/output/CodeWriter.vm",
+                outputPath,
             );
             expect(actual).toStrictEqual(expected);
         });
@@ -46,7 +50,7 @@ describe("CodeWriter", () => {
             `;
 
             const actual = await Deno.readTextFile(
-                "./test_files/output/CodeWriter.vm",
+                outputPath,
             );
             expect(actual).toStrictEqual(expected);
         });

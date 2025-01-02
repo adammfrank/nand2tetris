@@ -1,4 +1,4 @@
-import { TextLineStream } from "@std/streams/text-line-stream";
+import { TextLineStream } from "jsr:@std/streams/text-line-stream";
 
 export enum CommandType {
     C_ARITHMETIC,
@@ -43,13 +43,14 @@ export class Parser {
         return result;
     }
 
-    public async advance(): Promise<void> {
+    public async advance(): Promise<string> {
         let value = await this.values.next();
         const skippable = /^\s*(\/\/.*)?$/; // comment or whitespace
         while (value.done !== true && value.value.match(skippable)) {
             value = await this.values.next();
         }
         this.currentValue = value;
+        return value.value;
     }
 
     public commandType(): CommandType {
