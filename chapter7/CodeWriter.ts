@@ -1,4 +1,5 @@
 import { CommandType } from "./Parser.ts";
+import { add, push } from "./Strings.ts";
 
 export class CodeWriter {
     constructor(private outputPath: string) {
@@ -19,18 +20,7 @@ M=D
 
     public async writeArithmetic(command: string): Promise<void> {
         if (command === "add") {
-            const addAssembly = `// add
-@SP
-A=M
-D=M
-@SP
-M=M-1
-@SP
-A=M
-M=M+D
-@SP
-M=M+1
-`;
+            const addAssembly = add();
             await Deno.writeTextFile(
                 this.outputPath,
                 addAssembly,
@@ -51,15 +41,7 @@ M=M+1
         if (commandType === CommandType.C_PUSH) {
             // Only works for constant
 
-            const pushAssembly = `// push constant ${index}
-@${index}
-D=A
-@SP
-A=M
-M=D
-@SP
-M=M+1
-`;
+            const pushAssembly = push().constant(index);
             await Deno.writeTextFile(this.outputPath, pushAssembly, {
                 append: true,
             });
