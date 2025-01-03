@@ -10,6 +10,7 @@ export class VMTranslator {
         await Deno.writeTextFile(outputFilePath, "");
         const parser = new Parser(inputFile);
         const codeWriter = new CodeWriter(outputFilePath);
+        await codeWriter.setup();
 
         await parser.advance();
 

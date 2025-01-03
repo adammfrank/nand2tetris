@@ -4,6 +4,19 @@ export class CodeWriter {
     constructor(private outputPath: string) {
     }
 
+    public async setup(): Promise<void> {
+        const setup = `// setup
+@256
+D=A
+@SP
+M=D
+`;
+        await Deno.writeTextFile(
+            this.outputPath,
+            setup,
+        );
+    }
+
     public async writeArithmetic(command: string): Promise<void> {
         if (command === "add") {
             const addAssembly = `// add
