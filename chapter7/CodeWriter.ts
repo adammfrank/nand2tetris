@@ -1,5 +1,5 @@
 import { CommandType } from "./Parser.ts";
-import { add, push } from "./Strings.ts";
+import { add, and, comp, neg, not, or, push, sub } from "./Strings.ts";
 
 export class CodeWriter {
     constructor(private outputPath: string) {
@@ -19,18 +19,45 @@ M=D
     }
 
     public async writeArithmetic(command: string): Promise<void> {
-        if (command === "add") {
-            const addAssembly = add();
-            await Deno.writeTextFile(
-                this.outputPath,
-                addAssembly,
-                {
-                    append: true,
-                },
-            );
-        } else {
-            throw new Error(`${command} not yet implemented`);
+        let arithAssembly: string;
+        switch (command) {
+            case "add":
+                arithAssembly = add();
+                break;
+            case "sub":
+                arithAssembly = sub();
+                break;
+            case "neg":
+                arithAssembly = neg();
+                break;
+            case "and":
+                arithAssembly = and();
+                break;
+            case "or":
+                arithAssembly = or();
+                break;
+            case "not":
+                arithAssembly = not();
+                break;
+            case "eq":
+                arithAssembly = comp().eq();
+                break;
+            case "gt":
+                arithAssembly = comp().gt();
+                break;
+            case "lt":
+                arithAssembly = comp().lt();
+                break;
+            default:
+                throw new Error(`${command} not yet implemented`);
         }
+        await Deno.writeTextFile(
+            this.outputPath,
+            arithAssembly,
+            {
+                append: true,
+            },
+        );
     }
 
     public async writePushPop(
@@ -46,7 +73,7 @@ M=D
                 append: true,
             });
         } else {
-            throw new Error("C_PUSH not yet implemented");
+            throw new Error("C_POP not yet implemented");
         }
     }
 

@@ -4,12 +4,13 @@ import { expect } from "jsr:@std/expect/expect";
 
 describe("VMTranslator", () => {
     let sut: VMTranslator;
+    beforeEach(() => {
+        sut = new VMTranslator();
+    });
+
     describe("SimpleAdd", () => {
         const inputFilePath = "./test_files/input/SimpleAdd.vm";
         const outputFilePath = "./test_files/actual_output/SimpleAdd.asm";
-        beforeEach(() => {
-            sut = new VMTranslator();
-        });
 
         test("run", async () => {
             await sut.run(inputFilePath, outputFilePath);
@@ -21,6 +22,14 @@ describe("VMTranslator", () => {
             );
 
             expect(actual).toStrictEqual(expected);
+        });
+    });
+    describe("StackTest", () => {
+        const inputFilePath = "./test_files/input/StackTest.vm";
+        const outputFilePath = "./test_files/actual_output/StackTest.asm";
+
+        test("run", async () => {
+            await sut.run(inputFilePath, outputFilePath);
         });
     });
 });
