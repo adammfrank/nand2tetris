@@ -1,20 +1,33 @@
 import { CommandType } from "./Parser.ts";
-import { add, and, comp, neg, not, or, push, sub } from "./Strings.ts";
+import {
+    add,
+    and,
+    comp,
+    end,
+    neg,
+    not,
+    or,
+    push,
+    setup,
+    sub,
+} from "./Strings.ts";
 
 export class CodeWriter {
     constructor(private outputPath: string) {
     }
 
     public async setup(): Promise<void> {
-        const setup = `// setup
-@256
-D=A
-@SP
-M=D
-`;
         await Deno.writeTextFile(
             this.outputPath,
-            setup,
+            setup(),
+        );
+    }
+
+    public async end(): Promise<void> {
+        await Deno.writeTextFile(
+            this.outputPath,
+            end(),
+            { append: true },
         );
     }
 

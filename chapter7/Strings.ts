@@ -49,7 +49,7 @@ export const sub = () =>
                    @SP
                    M=M-1
                    A=M
-                   M=D-M
+                   M=M-D
                    @SP
                    M=M+1
 `;
@@ -59,20 +59,12 @@ export const neg = () =>
                    @SP
                    M=M-1
                    A=M
-                   D=M
-                   @SP
-                   M=M-1
-                   A=M
                    M=-M
                    @SP
                    M=M+1
 `;
 export const not = () =>
     stripIndent`// not
-                   @SP
-                   M=M-1
-                   A=M
-                   D=M
                    @SP
                    M=M-1
                    A=M
@@ -121,29 +113,25 @@ export const comp = () => {
                    @SP
                    M=M-1
                    A=M
-                   D=D-M
+                   D=M-D
                    @TRUE_RESULT${compCount}
                    D;JEQ
                    @FALSE_RESULT${compCount}
                    D;JNE
                    
                    (FALSE_RESULT${compCount})
-                   @0
-                   D=A
                    @SP
                    A=M
-                   M=D
+                   M=0
                    @SP
                    M=M+1
                    @CONTINUE${compCount}
                    D;JMP
                    
                    (TRUE_RESULT${compCount})
-                   @1
-                   D=A
                    @SP
                    A=M
-                   M=D
+                   M=-1
                    @SP
                    M=M+1
                    @CONTINUE${compCount}
@@ -160,29 +148,25 @@ export const comp = () => {
                    @SP
                    M=M-1
                    A=M
-                   D=D-M
+                   D=M-D
                    @TRUE_RESULT${compCount}
                    D;JLT
                    @FALSE_RESULT${compCount}
                    D;JGE
                    
                    (FALSE_RESULT${compCount})
-                   @0
-                   D=A
                    @SP
                    A=M
-                   M=D
+                   M=0
                    @SP
                    M=M+1
                    @CONTINUE${compCount}
                    D;JMP
                    
                    (TRUE_RESULT${compCount})
-                   @1
-                   D=A
                    @SP
                    A=M
-                   M=D
+                   M=-1
                    @SP
                    M=M+1
                    @CONTINUE${compCount}
@@ -199,29 +183,25 @@ export const comp = () => {
                    @SP
                    M=M-1
                    A=M
-                   D=D-M
+                   D=M-D
                    @TRUE_RESULT${compCount}
                    D;JGT
                    @FALSE_RESULT${compCount}
                    D;JLE
                    
                    (FALSE_RESULT${compCount})
-                   @0
-                   D=A
                    @SP
                    A=M
-                   M=D
+                   M=0
                    @SP
                    M=M+1
                    @CONTINUE${compCount}
                    D;JMP
                    
                    (TRUE_RESULT${compCount})
-                   @1
-                   D=A
                    @SP
                    A=M
-                   M=D
+                   M=-1
                    @SP
                    M=M+1
                    @CONTINUE${compCount}
@@ -231,3 +211,17 @@ export const comp = () => {
                    `,
     };
 };
+
+export const setup = () =>
+    stripIndent`// setup
+@256
+D=A
+@SP
+M=D
+`;
+
+export const end = () =>
+    stripIndent`// Infinite loop
+(END)
+@END
+0;JMP`;

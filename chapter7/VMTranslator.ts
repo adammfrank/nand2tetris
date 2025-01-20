@@ -35,5 +35,7 @@ export class VMTranslator {
             }
             await parser.advance();
         }
+
+        await codeWriter.end();
     }
 }

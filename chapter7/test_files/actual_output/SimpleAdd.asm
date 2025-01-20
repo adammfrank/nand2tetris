@@ -30,3 +30,7 @@ A=M
 M=D+M
 @SP
 M=M+1
+// Infinite loop
+(END)
+@END
+0;JMP

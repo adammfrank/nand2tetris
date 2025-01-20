@@ -30,6 +30,18 @@ describe("VMTranslator", () => {
 
         test("run", async () => {
             await sut.run(inputFilePath, outputFilePath);
+            const expected = await Deno.readTextFile(
+                "./test_files/expected_output/StackTest.asm",
+            );
+            const actual = await Deno.readTextFile(
+                "./test_files/actual_output/StackTest.asm",
+            );
+
+            const result = expected === actual;
+
+            console.log("RESULT " + result);
+
+            expect(actual).toStrictEqual(expected);
         });
     });
 });
