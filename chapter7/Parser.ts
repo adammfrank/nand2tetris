@@ -12,6 +12,9 @@ export enum CommandType {
     C_CALL,
 }
 
+/**
+ * Map command strings to CommandType
+ */
 const commands: Record<string, CommandType> = {
     "add": CommandType.C_ARITHMETIC,
     "sub": CommandType.C_ARITHMETIC,
@@ -27,6 +30,10 @@ const commands: Record<string, CommandType> = {
     // TODO: ADD THE REST
 };
 
+/**
+ * Reads the file and provides methods for parsing command and arguments
+ * of each line
+ */
 export class Parser {
     private values: AsyncIterableIterator<string>;
     public currentValue: IteratorResult<string> | null = null;
@@ -37,12 +44,21 @@ export class Parser {
             .values();
     }
 
+    /**
+     * this.currentValue is null if we haven't started yet
+     * @returns True if file has more lines to read
+     */
     public hasMoreLines(): boolean {
         const result = this.currentValue === null ||
             this.currentValue.done !== true;
         return result;
     }
 
+    /**
+     * Gets the next line in the file and both saves it in this.currentValue
+     * and returns it.
+     * @returns The current line after advancing
+     */
     public async advance(): Promise<string> {
         let value = await this.values.next();
         const skippable = /^\s*(\/\/.*)?$/; // comment or whitespace
@@ -53,6 +69,10 @@ export class Parser {
         return value.value;
     }
 
+    /**
+     * Parses the line's first word into its CommandType
+     * @returns the CommandType
+     */
     public commandType(): CommandType {
         if (!this.currentValue) {
             throw new Error("No current Value for commandType");
@@ -69,6 +89,12 @@ export class Parser {
         return commandType;
     }
 
+    /**
+     * Return the first word of the line. If command type is C_ARITHMETIC,
+     * return the command (the line has no other arguments).
+     * Otherwise, return the second word of the line.
+     * @returns The first argument of the line
+     */
     public arg1(): string {
         const commandType = this.commandType();
         if (commandType === CommandType.C_ARITHMETIC) {
@@ -82,6 +108,11 @@ export class Parser {
         return "";
     }
 
+    /**
+     * Return the second word of the line.
+     * Only valid for C_PUSH, C_POP, C_FUNCTION, and C_CALL
+     * @returns The second argument of the line.
+     */
     public arg2(): string {
         const commandType = this.commandType();
         if (

@@ -6,12 +6,16 @@ export class VMTranslator {
         inputFilePath: string,
         outputFilePath: string,
     ): Promise<void> {
+        // TODO: Move this into CodeWriter
         const inputFile = await Deno.open(inputFilePath);
         await Deno.writeTextFile(outputFilePath, "");
+
         const parser = new Parser(inputFile);
+
         const codeWriter = new CodeWriter(outputFilePath);
         await codeWriter.setup();
 
+        // TODO: Can it advance itself to start?
         await parser.advance();
 
         while (await parser.hasMoreLines()) {
@@ -24,13 +28,12 @@ export class VMTranslator {
                     parser.commandType(),
                 )
             ) {
-                const splitCommand = curValue.split(" ");
                 await codeWriter.writePushPop(
                     parser.commandType() as
                         | CommandType.C_PUSH
                         | CommandType.C_POP,
-                    splitCommand[1],
-                    parseInt(splitCommand[2]),
+                    parser.arg1(),
+                    parseInt(parser.arg2()),
                 );
             }
             await parser.advance();

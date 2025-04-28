@@ -12,10 +12,16 @@ import {
     sub,
 } from "./Strings.ts";
 
+/**
+ * Writes given commands to an output file.
+ */
 export class CodeWriter {
     constructor(private outputPath: string) {
     }
 
+    /**
+     * Header boilerplate
+     */
     public async setup(): Promise<void> {
         await Deno.writeTextFile(
             this.outputPath,
@@ -23,6 +29,9 @@ export class CodeWriter {
         );
     }
 
+    /**
+     * Footer boilerplate
+     */
     public async end(): Promise<void> {
         await Deno.writeTextFile(
             this.outputPath,
@@ -31,6 +40,10 @@ export class CodeWriter {
         );
     }
 
+    /**
+     * Write a given arithmetic-logical command
+     * @param command command string from VM code
+     */
     public async writeArithmetic(command: string): Promise<void> {
         let arithAssembly: string;
         switch (command) {
@@ -73,6 +86,12 @@ export class CodeWriter {
         );
     }
 
+    /**
+     * Write a push or pop command
+     * @param commandType push or pop
+     * @param segment memory segment
+     * @param index index into the memory segment
+     */
     public async writePushPop(
         commandType: CommandType.C_PUSH | CommandType.C_POP,
         segment: string,
