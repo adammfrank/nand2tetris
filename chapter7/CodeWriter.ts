@@ -7,6 +7,7 @@ import {
     neg,
     not,
     or,
+    pop,
     push,
     setup,
     sub,
@@ -97,16 +98,37 @@ export class CodeWriter {
         segment: string,
         index: number,
     ): Promise<void> {
+        let assembly = "";
         if (commandType === CommandType.C_PUSH) {
-            // Only works for constant
-
-            const pushAssembly = push().constant(index);
-            await Deno.writeTextFile(this.outputPath, pushAssembly, {
-                append: true,
-            });
+            switch (segment) {
+                case "constant":
+                    assembly = push().constant(index);
+                    break;
+                case "local":
+                    assembly = push().local(index);
+                    break;
+                case "argument":
+                    assembly = push().argument(index);
+                    break;
+                case "this":
+                    assembly = push().argument(index);
+                    break;
+                default:
+                    throw new Error(`push ${segment} not yet implemented`);
+            }
         } else {
+            switch (segment) {
+                case "local":
+                    assembly = pop().local(index);
+                    break;
+                default:
+                    throw new Error(`pop ${segment} not yet implemented`);
+            }
             throw new Error("C_POP not yet implemented");
         }
+        await Deno.writeTextFile(this.outputPath, assembly, {
+            append: true,
+        });
     }
 
     public async close(): Promise<void> {}

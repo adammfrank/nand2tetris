@@ -25,9 +25,95 @@ export const push = () => ({
                        @SP
                        M=M+1
                        `,
+    local: (index: number) =>
+        /**
+         * Load index into D
+         * Get value stored at RAM[1 + index]
+         * Store value on stack
+         * Increment stack pointer
+         */
+        stripIndent`// push local ${index}
+                       @${index}
+                       D=A
+                       @1
+                       A=D+M
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+                       `,
+    argument: (index: number) =>
+        stripIndent`// push argument ${index}
+                       @${index}
+                       D=A
+                       @2
+                       A=D+M
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+                       `,
+    this: (index: number) =>
+        stripIndent`// push this ${index}
+                       @${index}
+                       D=A
+                       @3
+                       A=D+M
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+                       `,
+});
+
+export const pop = () => ({
+    local: ((index: number) =>
+        /**
+         * Value from stack is stored in R13
+         */
+        stripIndent`// pop local ${index}
+                   @SP
+                   M=M-1
+                   @LCL
+                   D=M
+                   @${index}
+                   D=D+A
+                   @R13
+                   M=D
+                   @SP
+                   D=M
+                   @R13
+                   A=M
+                   M=D
+                   
+
+    `),
+    argument: ((index: number) =>
+        /**
+         * Load address of local + index into D
+         */
+        stripIndent`// pop argument ${index}
+                   @${index}
+                   D=A
+                   @2
+                   D=D+M
+                   @SP
+                   M=M-1
+                   A=M
+                   D=M
+
+    `),
 });
 
 export const add = () =>
+    // A=M Deref stack pointer to get value on top of stack
+    // D=M Save top value into D
     stripIndent`// add
                    @SP
                    M=M-1
