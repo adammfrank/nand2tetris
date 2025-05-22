@@ -14,28 +14,22 @@ function stripIndent(
         .trim() // Remove leading and trailing empty lines
         .concat("\n"); // Add new line at end;
 }
-export const push = () => ({
-    constant: (index: number) =>
-        stripIndent`// push constant ${index}
-                       @${index}
-                       D=A
-                       @SP
-                       A=M
-                       M=D
-                       @SP
-                       M=M+1
-                       `,
-    local: (index: number) =>
-        /**
-         * Load index into D
-         * Get value stored at RAM[1 + index]
-         * Store value on stack
-         * Increment stack pointer
-         */
+
+const segments: Record<string, string> = {
+    "constant": "constant",
+    "local": "LCL",
+    "argument": "ARG",
+    "this": "THIS",
+    "that": "THAT",
+    "temp": "TEMPT",
+};
+
+export const push = () => {
+    const template = (segment: string) => (index: number) =>
         stripIndent`// push local ${index}
                        @${index}
                        D=A
-                       @LCL
+                       @${segments[segment]}
                        A=D+M
                        D=M
                        @SP
@@ -43,63 +37,29 @@ export const push = () => ({
                        M=D
                        @SP
                        M=M+1
-                       `,
-    argument: (index: number) =>
-        stripIndent`// push argument ${index}
+                       `;
+
+    return {
+        constant: (index: number) =>
+            stripIndent`// push constant ${index}
                        @${index}
                        D=A
-                       @ARG
-                       A=D+M
-                       D=M
                        @SP
                        A=M
                        M=D
                        @SP
                        M=M+1
                        `,
-    this: (index: number) =>
-        stripIndent`// push this ${index}
-                       @${index}
-                       D=A
-                       @THIS
-                       A=D+M
-                       D=M
-                       @SP
-                       A=M
-                       M=D
-                       @SP
-                       M=M+1
-                       `,
-    that: (index: number) =>
-        stripIndent`// push this ${index}
-                       @${index}
-                       D=A
-                       @THAT
-                       A=D+M
-                       D=M
-                       @SP
-                       A=M
-                       M=D
-                       @SP
-                       M=M+1
-                       `,
-    temp: (index: number) =>
-        stripIndent`// push this ${index}
-                       @${index}
-                       D=A
-                       @THAT
-                       A=D+M
-                       D=M
-                       @SP
-                       A=M
-                       M=D
-                       @SP
-                       M=M+1
-                       `,
-});
+        local: template("local"),
+        argument: template("argument"),
+        this: template("this"),
+        that: template("that"),
+        temp: template("temp"),
+    };
+};
 
 export const pop = () => {
-    const template = (segment: string) => (index: string) =>
+    const template = (segment: string) => (index: number) =>
         stripIndent`// pop ${segment} ${index}
                    @SP
                    M=M-1
