@@ -39,9 +39,27 @@ describe("VMTranslator", () => {
 
             const result = expected === actual;
 
-            console.log("RESULT " + result);
-
             expect(actual).toStrictEqual(expected);
+        });
+    });
+    describe("BasicTest", () => {
+        const inputFilePath = "./test_files/input/BasicTest.vm";
+        const outputFilePath = "./test_files/actual_output/BasicTest.asm";
+
+        test("run", async () => {
+            await sut.run(inputFilePath, outputFilePath);
+            // const expected = await Deno.readTextFile(
+            //     "./test_files/expected_output/BasicTest.asm",
+            // );
+            // const actual = await Deno.readTextFile(
+            //     "./test_files/actual_output/BasicTest.asm",
+            // );
+
+            // const result = expected === actual;
+
+            // console.log("RESULT " + result);
+
+            // expect(actual).toStrictEqual(expected);
         });
     });
 });

@@ -111,8 +111,15 @@ export class CodeWriter {
                     assembly = push().argument(index);
                     break;
                 case "this":
-                    assembly = push().argument(index);
+                    assembly = push().this(index);
                     break;
+                case "that":
+                    assembly = push().that(index);
+                    break;
+                case "temp":
+                    assembly = push().temp(index);
+                    break;
+
                 default:
                     throw new Error(`push ${segment} not yet implemented`);
             }
@@ -121,10 +128,21 @@ export class CodeWriter {
                 case "local":
                     assembly = pop().local(index);
                     break;
+                case "argument":
+                    assembly = pop().argument(index);
+                    break;
+                case "this":
+                    assembly = pop().this(index);
+                    break;
+                case "that":
+                    assembly = pop().that(index);
+                    break;
+                case "temp":
+                    assembly = pop().temp(index);
+                    break;
                 default:
                     throw new Error(`pop ${segment} not yet implemented`);
             }
-            throw new Error("C_POP not yet implemented");
         }
         await Deno.writeTextFile(this.outputPath, assembly, {
             append: true,

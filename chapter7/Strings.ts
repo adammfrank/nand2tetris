@@ -35,7 +35,7 @@ export const push = () => ({
         stripIndent`// push local ${index}
                        @${index}
                        D=A
-                       @1
+                       @LCL
                        A=D+M
                        D=M
                        @SP
@@ -48,7 +48,7 @@ export const push = () => ({
         stripIndent`// push argument ${index}
                        @${index}
                        D=A
-                       @2
+                       @ARG
                        A=D+M
                        D=M
                        @SP
@@ -61,7 +61,33 @@ export const push = () => ({
         stripIndent`// push this ${index}
                        @${index}
                        D=A
-                       @3
+                       @THIS
+                       A=D+M
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+                       `,
+    that: (index: number) =>
+        stripIndent`// push this ${index}
+                       @${index}
+                       D=A
+                       @THAT
+                       A=D+M
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+                       `,
+    temp: (index: number) =>
+        stripIndent`// push this ${index}
+                       @${index}
+                       D=A
+                       @THAT
                        A=D+M
                        D=M
                        @SP
@@ -72,44 +98,34 @@ export const push = () => ({
                        `,
 });
 
-export const pop = () => ({
-    local: ((index: number) =>
-        /**
-         * Value from stack is stored in R13
-         */
-        stripIndent`// pop local ${index}
+export const pop = () => {
+    const template = (segment: string) => (index: string) =>
+        stripIndent`// pop ${segment} ${index}
                    @SP
                    M=M-1
-                   @LCL
+                   @${segment}
                    D=M
                    @${index}
                    D=D+A
                    @R13
                    M=D
                    @SP
+                   A=M 
                    D=M
                    @R13
                    A=M
                    M=D
                    
+    `;
 
-    `),
-    argument: ((index: number) =>
-        /**
-         * Load address of local + index into D
-         */
-        stripIndent`// pop argument ${index}
-                   @${index}
-                   D=A
-                   @2
-                   D=D+M
-                   @SP
-                   M=M-1
-                   A=M
-                   D=M
-
-    `),
-});
+    return {
+        local: template("LCL"),
+        argument: template("ARG"),
+        this: template("THIS"),
+        that: template("THAT"),
+        temp: template("TEMP"),
+    };
+};
 
 export const add = () =>
     // A=M Deref stack pointer to get value on top of stack
