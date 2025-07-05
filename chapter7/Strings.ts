@@ -21,12 +21,12 @@ const segments: Record<string, string> = {
     "argument": "ARG",
     "this": "THIS",
     "that": "THAT",
-    "temp": "TEMPT",
+    "temp": "5",
 };
 
 export const push = () => {
     const template = (segment: string) => (index: number) =>
-        stripIndent`// push local ${index}
+        stripIndent`// push ${segment} ${index}
                        @${index}
                        D=A
                        @${segments[segment]}
@@ -50,11 +50,23 @@ export const push = () => {
                        @SP
                        M=M+1
                        `,
+        temp: (index: number) =>
+            stripIndent`// push temp ${index}
+                       @${index}
+                       D=A
+                       @5 // temp starts at RAM[5]
+                       A=D+A
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+            `,
         local: template("local"),
         argument: template("argument"),
         this: template("this"),
         that: template("that"),
-        temp: template("temp"),
     };
 };
 
@@ -83,7 +95,24 @@ export const pop = () => {
         argument: template("ARG"),
         this: template("THIS"),
         that: template("THAT"),
-        temp: template("TEMP"),
+        temp: (index: number) =>
+            stripIndent`// pop temp ${index}
+                   @SP
+                   M=M-1
+                   @5 // temp starts at RAM[5]
+                   D=A
+                   @${index}
+                   D=D+A
+                   @R13
+                   M=D
+                   @SP
+                   A=M 
+                   D=M
+                   @R13
+                   A=M
+                   M=D
+                   
+    `,
     };
 };
 

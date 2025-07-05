@@ -13,7 +13,7 @@ export class VMTranslator {
         const parser = new Parser(inputFile);
 
         const codeWriter = new CodeWriter(outputFilePath);
-        await codeWriter.setup();
+        // await codeWriter.setup();
 
         // TODO: Can it advance itself to start?
         await parser.advance();

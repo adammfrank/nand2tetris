@@ -1,8 +1,3 @@
-// setup
-@256
-D=A
-@SP
-M=D
 // push constant 10
 @10
 D=A
@@ -149,11 +144,11 @@ A=M
 M=D
 @SP
 M=M+1
-// pop TEMP 6
+// pop temp 6
 @SP
 M=M-1
-@TEMP
-D=M
+@5 // temp starts at RAM[5]
+D=A
 @6
 D=D+A
 @R13
@@ -175,7 +170,7 @@ A=M
 M=D
 @SP
 M=M+1
-// push this 5
+// push that 5
 @5
 D=A
 @THAT
@@ -263,11 +258,11 @@ A=M
 M=M-D
 @SP
 M=M+1
-// push this 6
+// push temp 6
 @6
 D=A
-@THAT
-A=D+M
+@5 // temp starts at RAM[5]
+A=D+A
 D=M
 @SP
 A=M
