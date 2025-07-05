@@ -68,6 +68,16 @@ export const push = () => {
         argument: template("argument"),
         this: template("this"),
         that: template("that"),
+        pointer: (index: 0 | 1) =>
+            stripIndent`// push pointer ${index}
+                       @${index === 0 ? "THIS" : "THAT"}
+                       D=M
+                       @SP
+                       A=M
+                       M=D
+                       @SP
+                       M=M+1
+                       `,
     };
 };
 
@@ -112,6 +122,16 @@ export const pop = () => {
                    D=M
                    @R13
                    A=M
+                   M=D
+                   
+    `,
+        pointer: (index: 0 | 1) =>
+            stripIndent`// pop pointer ${index}
+                   @SP
+                   M=M-1
+                   A=M
+                   D=M
+                   @${index === 0 ? "THIS" : "THAT"}
                    M=D
                    
     `,

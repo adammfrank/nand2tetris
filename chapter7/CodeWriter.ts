@@ -119,6 +119,14 @@ export class CodeWriter {
                 case "temp":
                     assembly = push().temp(index);
                     break;
+                case "pointer":
+                    if (index !== 0 && index !== 1) {
+                        throw new Error(
+                            `pointer index {$index} does not exist`,
+                        );
+                    }
+                    assembly = push().pointer(index);
+                    break;
 
                 default:
                     throw new Error(`push ${segment} not yet implemented`);
@@ -140,6 +148,15 @@ export class CodeWriter {
                 case "temp":
                     assembly = pop().temp(index);
                     break;
+                case "pointer":
+                    if (index !== 0 && index !== 1) {
+                        throw new Error(
+                            `pointer index {$index} does not exist`,
+                        );
+                    }
+                    assembly = pop().pointer(index);
+                    break;
+
                 default:
                     throw new Error(`pop ${segment} not yet implemented`);
             }
