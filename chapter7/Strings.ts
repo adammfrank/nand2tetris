@@ -50,6 +50,7 @@ export const push = () => {
                        @SP
                        M=M+1
                        `,
+        // Remember TEMP is different because TEMP[0] is RAM[5] not the address RAM[5] holds
         temp: (index: number) =>
             stripIndent`// push temp ${index}
                        @${index}
@@ -95,6 +96,7 @@ export const pop = () => {
         argument: template("ARG"),
         this: template("THIS"),
         that: template("THAT"),
+        // Remember TEMP is different because TEMP[0] is RAM[5] not the address RAM[5] holds
         temp: (index: number) =>
             stripIndent`// pop temp ${index}
                    @SP

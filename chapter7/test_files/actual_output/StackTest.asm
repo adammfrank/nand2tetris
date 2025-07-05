@@ -1,8 +1,3 @@
-// setup
-@256
-D=A
-@SP
-M=D
 // push constant 17
 @17
 D=A

@@ -37,8 +37,6 @@ describe("VMTranslator", () => {
                 "./test_files/actual_output/StackTest.asm",
             );
 
-            const result = expected === actual;
-
             expect(actual).toStrictEqual(expected);
         });
     });
@@ -48,18 +46,14 @@ describe("VMTranslator", () => {
 
         test("run", async () => {
             await sut.run(inputFilePath, outputFilePath);
-            // const expected = await Deno.readTextFile(
-            //     "./test_files/expected_output/BasicTest.asm",
-            // );
-            // const actual = await Deno.readTextFile(
-            //     "./test_files/actual_output/BasicTest.asm",
-            // );
+            const expected = await Deno.readTextFile(
+                "./test_files/expected_output/BasicTest.asm",
+            );
+            const actual = await Deno.readTextFile(
+                "./test_files/actual_output/BasicTest.asm",
+            );
 
-            // const result = expected === actual;
-
-            // console.log("RESULT " + result);
-
-            // expect(actual).toStrictEqual(expected);
+            expect(actual).toStrictEqual(expected);
         });
     });
 });
