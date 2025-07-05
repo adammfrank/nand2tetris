@@ -3,6 +3,7 @@ import {
     add,
     and,
     comp,
+    CompState,
     end,
     neg,
     not,
@@ -17,6 +18,7 @@ import {
  * Writes given commands to an output file.
  */
 export class CodeWriter {
+    private compState: CompState = { count: 0 };
     constructor(private outputPath: string) {
     }
 
@@ -67,13 +69,13 @@ export class CodeWriter {
                 arithAssembly = not();
                 break;
             case "eq":
-                arithAssembly = comp().eq();
+                arithAssembly = comp(this.compState).eq();
                 break;
             case "gt":
-                arithAssembly = comp().gt();
+                arithAssembly = comp(this.compState).gt();
                 break;
             case "lt":
-                arithAssembly = comp().lt();
+                arithAssembly = comp(this.compState).lt();
                 break;
             default:
                 throw new Error(`${command} not yet implemented`);

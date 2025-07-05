@@ -213,9 +213,12 @@ export const and = () =>
                    M=M+1
 `;
 
-let compCount = -1;
-export const comp = () => {
-    compCount++;
+export interface CompState {
+    count: number;
+}
+
+export const comp = (compState: CompState) => {
+    const compCount = compState.count++;
     return {
         eq: () =>
             stripIndent`// eq
