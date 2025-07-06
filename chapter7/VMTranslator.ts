@@ -1,5 +1,6 @@
 import { CodeWriter } from "./CodeWriter.ts";
 import { CommandType, Parser } from "./Parser.ts";
+import { PushPop } from "./Strings.ts";
 
 export class VMTranslator {
     public async run(
@@ -30,7 +31,7 @@ export class VMTranslator {
                     parser.commandType() as
                         | CommandType.C_PUSH
                         | CommandType.C_POP,
-                    parser.arg1(),
+                    parser.arg1() as keyof PushPop,
                     parseInt(parser.arg2()),
                 );
             }

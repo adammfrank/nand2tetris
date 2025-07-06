@@ -24,7 +24,17 @@ const segments: Record<string, string> = {
     "temp": "5",
 };
 
-export const push = () => {
+export interface PushPop {
+    constant: (index: number) => string;
+    temp: (index: number) => string;
+    local: (index: number) => string;
+    argument: (index: number) => string;
+    this: (index: number) => string;
+    that: (index: number) => string;
+    pointer: (index: number) => string;
+    static: (index: number) => string;
+}
+export const push = (fileName: string): PushPop => {
     const template = (segment: string) => (index: number) =>
         stripIndent`// push ${segment} ${index}
                        @${index}
@@ -68,7 +78,7 @@ export const push = () => {
         argument: template("argument"),
         this: template("this"),
         that: template("that"),
-        pointer: (index: 0 | 1) =>
+        pointer: (index: number) =>
             stripIndent`// push pointer ${index}
                        @${index === 0 ? "THIS" : "THAT"}
                        D=M
@@ -78,7 +88,7 @@ export const push = () => {
                        @SP
                        M=M+1
                        `,
-        static: (fileName: string, index: number) =>
+        static: (index: number) =>
             stripIndent`// push static ${index}
                         @${fileName}.${index}
                         D=M
@@ -87,12 +97,11 @@ export const push = () => {
                         M=D
                         @SP
                         M=M+1
-                        `,
-        // TODO: pickup here
+                       `,
     };
 };
 
-export const pop = () => {
+export const pop = (fileName: string): PushPop => {
     const template = (segment: string) => (index: number) =>
         stripIndent`// pop ${segment} ${index}
                    @SP
@@ -109,10 +118,12 @@ export const pop = () => {
                    @R13
                    A=M
                    M=D
-                   
     `;
 
     return {
+        constant: () => {
+            throw new Error("Pop Constant does not exist");
+        },
         local: template("LCL"),
         argument: template("ARG"),
         this: template("THIS"),
@@ -136,7 +147,7 @@ export const pop = () => {
                    M=D
                    
     `,
-        pointer: (index: 0 | 1) =>
+        pointer: (index: number) =>
             stripIndent`// pop pointer ${index}
                    @SP
                    M=M-1
@@ -146,7 +157,7 @@ export const pop = () => {
                    M=D
                    
     `,
-        static: (fileName: string, index: number) =>
+        static: (index: number) =>
             stripIndent`// pop static ${index}
                            @SP
                            M=M-1
@@ -158,10 +169,10 @@ export const pop = () => {
     };
 };
 
-export const add = () =>
-    // A=M Deref stack pointer to get value on top of stack
-    // D=M Save top value into D
-    stripIndent`// add
+export const logic = () => {
+    function template(operation: string, assembly: string) {
+        return stripIndent`
+                   // ${operation}
                    @SP
                    M=M-1
                    A=M
@@ -169,69 +180,36 @@ export const add = () =>
                    @SP
                    M=M-1
                    A=M
-                   M=D+M
+                   M=${assembly}
                    @SP
                    M=M+1
-`;
-export const sub = () =>
-    stripIndent`// sub
-                   @SP
-                   M=M-1
-                   A=M
-                   D=M
-                   @SP
-                   M=M-1
-                   A=M
-                   M=M-D
-                   @SP
-                   M=M+1
-`;
+    `;
+    }
 
-export const neg = () =>
-    stripIndent`// neg
+    return {
+        add: () => template("add", "D+M"),
+        sub: () => template("sub", "M-D"),
+        or: () => template("or", "D|M"),
+        and: () => template("and", "D&M"),
+        neg: () =>
+            stripIndent`// neg
                    @SP
                    M=M-1
                    A=M
                    M=-M
                    @SP
-                   M=M+1
-`;
-export const not = () =>
-    stripIndent`// not
+                   M=M+1`,
+        not: () =>
+            stripIndent`// not
                    @SP
                    M=M-1
                    A=M
                    M=!M
                    @SP
                    M=M+1
-`;
-
-export const or = () =>
-    stripIndent`// or
-                   @SP
-                   M=M-1
-                   A=M
-                   D=M
-                   @SP
-                   M=M-1
-                   A=M
-                   M=D|M
-                   @SP
-                   M=M+1
-`;
-export const and = () =>
-    stripIndent`// and
-                   @SP
-                   M=M-1
-                   A=M
-                   D=M
-                   @SP
-                   M=M-1
-                   A=M
-                   M=D&M
-                   @SP
-                   M=M+1
-`;
+                   `,
+    };
+};
 
 export interface CompState {
     count: number;

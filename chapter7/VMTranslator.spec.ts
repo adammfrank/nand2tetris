@@ -15,21 +15,19 @@ describe("VMTranslator", () => {
 
     for (const t of TESTS) {
         sut = new VMTranslator();
-        describe(t, () => {
+        test(t, async () => {
             const inputFilePath = `./test_files/input/${t}.vm`;
             const outputFilePath = `./test_files/actual_output/${t}.asm`;
 
-            test("run", async () => {
-                await sut.run(inputFilePath, outputFilePath);
-                const expected = await Deno.readTextFile(
-                    `./test_files/expected_output/${t}.asm`,
-                );
-                const actual = await Deno.readTextFile(
-                    `./test_files/actual_output/${t}.asm`,
-                );
+            await sut.run(inputFilePath, outputFilePath);
+            const expected = await Deno.readTextFile(
+                `./test_files/expected_output/${t}.asm`,
+            );
+            const actual = await Deno.readTextFile(
+                `./test_files/actual_output/${t}.asm`,
+            );
 
-                expect(actual).toStrictEqual(expected);
-            });
+            expect(actual).toStrictEqual(expected);
         });
     }
 });

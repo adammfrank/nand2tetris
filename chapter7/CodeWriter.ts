@@ -1,17 +1,5 @@
 import { CommandType } from "./Parser.ts";
-import {
-    add,
-    and,
-    comp,
-    CompState,
-    end,
-    neg,
-    not,
-    or,
-    pop,
-    push,
-    sub,
-} from "./Strings.ts";
+import { comp, CompState, end, logic, pop, push, PushPop } from "./Strings.ts";
 
 import * as path from "jsr:@std/path";
 /**
@@ -43,22 +31,22 @@ export class CodeWriter {
         let arithAssembly: string;
         switch (command) {
             case "add":
-                arithAssembly = add();
+                arithAssembly = logic().add();
                 break;
             case "sub":
-                arithAssembly = sub();
+                arithAssembly = logic().sub();
                 break;
             case "neg":
-                arithAssembly = neg();
+                arithAssembly = logic().neg();
                 break;
             case "and":
-                arithAssembly = and();
+                arithAssembly = logic().and();
                 break;
             case "or":
-                arithAssembly = or();
+                arithAssembly = logic().or();
                 break;
             case "not":
-                arithAssembly = not();
+                arithAssembly = logic().not();
                 break;
             case "eq":
                 arithAssembly = comp(this.compState).eq();
@@ -89,77 +77,48 @@ export class CodeWriter {
      */
     public async writePushPop(
         commandType: CommandType.C_PUSH | CommandType.C_POP,
-        segment: string,
+        segment: keyof PushPop,
         index: number,
     ): Promise<void> {
         let assembly = "";
         if (commandType === CommandType.C_PUSH) {
-            switch (segment) {
-                case "constant":
-                    assembly = push().constant(index);
-                    break;
-                case "local":
-                    assembly = push().local(index);
-                    break;
-                case "argument":
-                    assembly = push().argument(index);
-                    break;
-                case "this":
-                    assembly = push().this(index);
-                    break;
-                case "that":
-                    assembly = push().that(index);
-                    break;
-                case "temp":
-                    assembly = push().temp(index);
-                    break;
-                case "pointer":
-                    if (index !== 0 && index !== 1) {
-                        throw new Error(
-                            `pointer index {$index} does not exist`,
-                        );
-                    }
-                    assembly = push().pointer(index);
-                    break;
-                case "static":
-                    assembly = push().static(this.fileName, index);
-                    break;
+            assembly = push(this.fileName)[segment](index);
+            // switch (segment) {
+            //     case "constant":
+            //         assembly = push().constant(index);
+            //         break;
+            //     case "local":
+            //         assembly = push().local(index);
+            //         break;
+            //     case "argument":
+            //         assembly = push().argument(index);
+            //         break;
+            //     case "this":
+            //         assembly = push().this(index);
+            //         break;
+            //     case "that":
+            //         assembly = push().that(index);
+            //         break;
+            //     case "temp":
+            //         assembly = push().temp(index);
+            //         break;
+            //     case "pointer":
+            //         if (index !== 0 && index !== 1) {
+            //             throw new Error(
+            //                 `pointer index {$index} does not exist`,
+            //             );
+            //         }
+            //         assembly = push().pointer(index);
+            //         break;
+            //     case "static":
+            //         assembly = push().static(this.fileName, index);
+            //         break;
 
-                default:
-                    throw new Error(`push ${segment} not yet implemented`);
-            }
+            //     default:
+            //         throw new Error(`push ${segment} not yet implemented`);
+            // }
         } else {
-            switch (segment) {
-                case "local":
-                    assembly = pop().local(index);
-                    break;
-                case "argument":
-                    assembly = pop().argument(index);
-                    break;
-                case "this":
-                    assembly = pop().this(index);
-                    break;
-                case "that":
-                    assembly = pop().that(index);
-                    break;
-                case "temp":
-                    assembly = pop().temp(index);
-                    break;
-                case "pointer":
-                    if (index !== 0 && index !== 1) {
-                        throw new Error(
-                            `pointer index {$index} does not exist`,
-                        );
-                    }
-                    assembly = pop().pointer(index);
-                    break;
-                case "static":
-                    assembly = pop().static(this.fileName, index);
-                    break;
-
-                default:
-                    throw new Error(`pop ${segment} not yet implemented`);
-            }
+            assembly = pop(this.fileName)[segment](index);
         }
         await Deno.writeTextFile(this.outputPath, assembly, {
             append: true,
