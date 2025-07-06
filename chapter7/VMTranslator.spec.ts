@@ -10,6 +10,7 @@ describe("VMTranslator", () => {
         "StackTest",
         "BasicTest",
         "PointerTest",
+        "StaticTest",
     ];
 
     for (const t of TESTS) {
