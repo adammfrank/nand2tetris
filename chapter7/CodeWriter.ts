@@ -10,26 +10,18 @@ import {
     or,
     pop,
     push,
-    setup,
     sub,
 } from "./Strings.ts";
 
+import * as path from "jsr:@std/path";
 /**
  * Writes given commands to an output file.
  */
 export class CodeWriter {
     private compState: CompState = { count: 0 };
+    private fileName: string;
     constructor(private outputPath: string) {
-    }
-
-    /**
-     * Header boilerplate
-     */
-    public async setup(): Promise<void> {
-        await Deno.writeTextFile(
-            this.outputPath,
-            setup(),
-        );
+        this.fileName = path.parse(outputPath).name;
     }
 
     /**
@@ -129,6 +121,9 @@ export class CodeWriter {
                     }
                     assembly = push().pointer(index);
                     break;
+                case "static":
+                    assembly = push().static(this.fileName, index);
+                    break;
 
                 default:
                     throw new Error(`push ${segment} not yet implemented`);
@@ -157,6 +152,9 @@ export class CodeWriter {
                         );
                     }
                     assembly = pop().pointer(index);
+                    break;
+                case "static":
+                    assembly = pop().static(this.fileName, index);
                     break;
 
                 default:

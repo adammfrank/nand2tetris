@@ -78,6 +78,17 @@ export const push = () => {
                        @SP
                        M=M+1
                        `,
+        static: (fileName: string, index: number) =>
+            stripIndent`// push static ${index}
+                        @${fileName}.${index}
+                        D=M
+                        @SP
+                        A=M
+                        M=D
+                        @SP
+                        M=M+1
+                        `,
+        // TODO: pickup here
     };
 };
 
@@ -135,6 +146,15 @@ export const pop = () => {
                    M=D
                    
     `,
+        static: (fileName: string, index: number) =>
+            stripIndent`// pop static ${index}
+                           @SP
+                           M=M-1
+                           A=M
+                           D=M
+                           @${fileName}.${index}
+                           M=D
+                           `,
     };
 };
 
