@@ -1,15 +1,17 @@
 import { CommandType } from "./Parser.ts";
 import { comp, CompState, end, logic, pop, push, PushPop } from "./Strings.ts";
 
-import * as path from "jsr:@std/path";
 /**
  * Writes given commands to an output file.
  */
 export class CodeWriter {
     private compState: CompState = { count: 0 };
-    private fileName: string;
+    private fileName?: string;
     constructor(private outputPath: string) {
-        this.fileName = path.parse(outputPath).name;
+    }
+
+    public setFileName(fileName: string) {
+        this.fileName = fileName;
     }
 
     /**
@@ -81,42 +83,11 @@ export class CodeWriter {
         index: number,
     ): Promise<void> {
         let assembly = "";
+        if (!this.fileName) {
+            throw new Error("File name not found.");
+        }
         if (commandType === CommandType.C_PUSH) {
             assembly = push(this.fileName)[segment](index);
-            // switch (segment) {
-            //     case "constant":
-            //         assembly = push().constant(index);
-            //         break;
-            //     case "local":
-            //         assembly = push().local(index);
-            //         break;
-            //     case "argument":
-            //         assembly = push().argument(index);
-            //         break;
-            //     case "this":
-            //         assembly = push().this(index);
-            //         break;
-            //     case "that":
-            //         assembly = push().that(index);
-            //         break;
-            //     case "temp":
-            //         assembly = push().temp(index);
-            //         break;
-            //     case "pointer":
-            //         if (index !== 0 && index !== 1) {
-            //             throw new Error(
-            //                 `pointer index {$index} does not exist`,
-            //             );
-            //         }
-            //         assembly = push().pointer(index);
-            //         break;
-            //     case "static":
-            //         assembly = push().static(this.fileName, index);
-            //         break;
-
-            //     default:
-            //         throw new Error(`push ${segment} not yet implemented`);
-            // }
         } else {
             assembly = pop(this.fileName)[segment](index);
         }

@@ -2,6 +2,7 @@ import { CodeWriter } from "./CodeWriter.ts";
 import { CommandType, Parser } from "./Parser.ts";
 import { PushPop } from "./Strings.ts";
 
+import * as path from "jsr:@std/path";
 export class VMTranslator {
     public async run(
         inputFilePath: string,
@@ -13,7 +14,9 @@ export class VMTranslator {
 
         const parser = new Parser(inputFile);
 
+        const fileName = path.parse(outputFilePath).name;
         const codeWriter = new CodeWriter(outputFilePath);
+        codeWriter.setFileName(fileName);
 
         await parser.advance();
 
