@@ -21,11 +21,9 @@ export class VMTranslator {
         await parser.advance();
 
         while (await parser.hasMoreLines()) {
-            const curValue = parser.currentValue?.value;
             const commandType = parser.commandType();
-            // TODO: Why did I use curValue instead of arg1() here?
             if (commandType === CommandType.C_ARITHMETIC) {
-                await codeWriter.writeArithmetic(curValue);
+                await codeWriter.writeArithmetic(parser.arg1());
             }
             if (
                 [CommandType.C_PUSH, CommandType.C_POP].includes(

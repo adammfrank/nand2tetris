@@ -16,3 +16,5 @@ push static 1
 sub
 push static 8
 add
+
+label END

@@ -40,7 +40,6 @@ export class CodeWriter {
      */
     public async writeArithmetic(command: string): Promise<void> {
         let arithAssembly: string;
-        command = command.trim();
         switch (command) {
             case "add":
                 arithAssembly = logic().add();

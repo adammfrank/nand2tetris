@@ -12,6 +12,7 @@ describe("VMTranslator", () => {
         "PointerTest",
         "StaticTest",
         "BasicLoop",
+        "FibonacciSeries",
     ];
 
     for (const t of TESTS) {

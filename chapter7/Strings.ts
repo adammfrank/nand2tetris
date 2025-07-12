@@ -336,7 +336,6 @@ M=D
 
 export const end = () =>
     stripIndent`// Infinite loop
-(END)
 @END
 0;JMP`;
 

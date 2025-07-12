@@ -537,7 +537,8 @@ A=M
 M=!M
 @SP
 M=M+1
-// Infinite loop
+// label END
 (END)
+// Infinite loop
 @END
 0;JMP

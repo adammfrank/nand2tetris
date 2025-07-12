@@ -80,7 +80,8 @@ export class Parser {
         if (!this.currentValue) {
             throw new Error("No current Value for commandType");
         }
-        const command = this.currentValue.value.trim().split(" ")[0];
+        // TODO: Shouldn't need to do this 3 times
+        const command = this.currentValue.value.trim().split(/\s+/)[0];
         if (!Object.hasOwn(commands, command)) {
             throw new Error(
                 `COMMAND_TYPE not found for ${command}`,
@@ -101,7 +102,8 @@ export class Parser {
     public arg1(): string {
         const commandType = this.commandType();
         if (commandType === CommandType.C_ARITHMETIC) {
-            return this.currentValue?.value;
+            // TODO: Shouldn't need to do this 3 times
+            return this.currentValue?.value.trim().split(/\s+/)[0];
         }
 
         return this.currentValue?.value.trim().split(" ")[1];

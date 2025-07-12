@@ -30,3 +30,4 @@ add
 sub
 push temp 6
 add
+label END
