@@ -22,21 +22,32 @@ export class VMTranslator {
 
         while (await parser.hasMoreLines()) {
             const curValue = parser.currentValue?.value;
-            if (parser.commandType() === CommandType.C_ARITHMETIC) {
+            const commandType = parser.commandType();
+            // TODO: Why did I use curValue instead of arg1() here?
+            if (commandType === CommandType.C_ARITHMETIC) {
                 await codeWriter.writeArithmetic(curValue);
             }
             if (
                 [CommandType.C_PUSH, CommandType.C_POP].includes(
-                    parser.commandType(),
+                    commandType,
                 )
             ) {
                 await codeWriter.writePushPop(
-                    parser.commandType() as
+                    commandType as
                         | CommandType.C_PUSH
                         | CommandType.C_POP,
                     parser.arg1() as keyof PushPop,
                     parseInt(parser.arg2()),
                 );
+            }
+            if (commandType === CommandType.C_LABEL) {
+                await codeWriter.writeLabel(parser.arg1());
+            }
+            if (commandType === CommandType.C_GOTO) {
+                await codeWriter.writeGoto(parser.arg1());
+            }
+            if (commandType === CommandType.C_IF) {
+                await codeWriter.writeIf(parser.arg1());
             }
             await parser.advance();
         }

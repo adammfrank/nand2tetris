@@ -339,3 +339,34 @@ export const end = () =>
 (END)
 @END
 0;JMP`;
+
+export const branch = () => {
+    const label = (label: string): string => {
+        return stripIndent`// label ${label}
+    (${label})`;
+    };
+
+    const goto = (label: string): string => {
+        return stripIndent`// go-to ${label}
+    @${label}
+    0;JMP`;
+    };
+
+    const gotoIf = (label: string): string => {
+        return stripIndent`
+            // go-to-if ${label}
+            @SP
+            M=M-1
+            A=M
+            D=M
+            @${label}
+            D;JNE
+            `;
+    };
+
+    return {
+        label,
+        goto,
+        gotoIf,
+    };
+};

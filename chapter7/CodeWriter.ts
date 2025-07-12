@@ -1,5 +1,14 @@
 import { CommandType } from "./Parser.ts";
-import { comp, CompState, end, logic, pop, push, PushPop } from "./Strings.ts";
+import {
+    branch,
+    comp,
+    CompState,
+    end,
+    logic,
+    pop,
+    push,
+    PushPop,
+} from "./Strings.ts";
 
 /**
  * Writes given commands to an output file.
@@ -31,6 +40,7 @@ export class CodeWriter {
      */
     public async writeArithmetic(command: string): Promise<void> {
         let arithAssembly: string;
+        command = command.trim();
         switch (command) {
             case "add":
                 arithAssembly = logic().add();
@@ -96,5 +106,26 @@ export class CodeWriter {
         });
     }
 
-    public async close(): Promise<void> {}
+    /**
+     * Write a label command
+     * @param label The label to write
+     */
+    public async writeLabel(label: string): Promise<void> {
+        const assembly = branch().label(label);
+        await Deno.writeTextFile(this.outputPath, assembly, { append: true });
+    }
+
+    /**
+     *  Write a go-to command for the label
+     * @param label The label we go-to
+     */
+    public async writeGoto(label: string): Promise<void> {
+        const assembly = branch().goto(label);
+        await Deno.writeTextFile(this.outputPath, assembly, { append: true });
+    }
+
+    public async writeIf(label: string): Promise<void> {
+        const assembly = branch().gotoIf(label);
+        await Deno.writeTextFile(this.outputPath, assembly, { append: true });
+    }
 }

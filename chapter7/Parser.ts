@@ -27,6 +27,9 @@ const commands: Record<string, CommandType> = {
     "not": CommandType.C_ARITHMETIC,
     "push": CommandType.C_PUSH,
     "pop": CommandType.C_POP,
+    "label": CommandType.C_LABEL,
+    "goto": CommandType.C_GOTO,
+    "if-goto": CommandType.C_IF,
     // TODO: ADD THE REST
 };
 
@@ -77,7 +80,7 @@ export class Parser {
         if (!this.currentValue) {
             throw new Error("No current Value for commandType");
         }
-        const command = this.currentValue.value.split(" ")[0];
+        const command = this.currentValue.value.trim().split(" ")[0];
         if (!Object.hasOwn(commands, command)) {
             throw new Error(
                 `COMMAND_TYPE not found for ${command}`,
@@ -101,11 +104,7 @@ export class Parser {
             return this.currentValue?.value;
         }
 
-        if ([CommandType.C_PUSH, CommandType.C_POP].includes(commandType)) {
-            return this.currentValue?.value.split(" ")[1];
-        }
-
-        return "";
+        return this.currentValue?.value.trim().split(" ")[1];
     }
 
     /**
@@ -126,6 +125,6 @@ export class Parser {
             throw new Error(`Command ${this.currentValue?.value} has no arg2`);
         }
 
-        return this.currentValue?.value.split(" ")[2];
+        return this.currentValue?.value.trim().split(" ")[2];
     }
 }
