@@ -30,6 +30,8 @@ const commands: Record<string, CommandType> = {
     "label": CommandType.C_LABEL,
     "goto": CommandType.C_GOTO,
     "if-goto": CommandType.C_IF,
+    "function": CommandType.C_FUNCTION,
+    "return": CommandType.C_RETURN,
     // TODO: ADD THE REST
 };
 

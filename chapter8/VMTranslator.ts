@@ -47,6 +47,17 @@ export class VMTranslator {
             if (commandType === CommandType.C_IF) {
                 await codeWriter.writeIf(parser.arg1());
             }
+
+            if (commandType === CommandType.C_FUNCTION) {
+                await codeWriter.writeFunction(
+                    parser.arg1(),
+                    parseInt(parser.arg2()),
+                );
+            }
+
+            if (commandType === CommandType.C_RETURN) {
+                await codeWriter.writeReturn();
+            }
             await parser.advance();
         }
 

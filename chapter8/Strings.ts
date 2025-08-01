@@ -339,7 +339,14 @@ export const end = () =>
 @END
 0;JMP`;
 
-export const branch = () => {
+export interface Branch {
+    label: (label: string) => string;
+    goto: (label: string) => string;
+    gotoIf: (label: string) => string;
+    fn: (name: string, nArgs: number) => string;
+    rturn: () => string;
+}
+export const branch = (fileName: string): Branch => {
     const label = (label: string): string => {
         return stripIndent`// label ${label}
     (${label})`;
@@ -363,9 +370,91 @@ export const branch = () => {
             `;
     };
 
+    const fn = (name: string, nVars: number): string => {
+        return stripIndent`
+        // function ${name} ${nVars}
+        (${fileName}.${name})
+        `.concat( // push nVars 0s onto the stack
+            new Array(nVars)
+                .fill(push(fileName).constant(0))
+                .join(""),
+        );
+    };
+
+    const rturn = () => {
+        return stripIndent`
+        // return
+
+        // frame = LCL
+        @LCL
+        D=M
+        @R13 // frame
+        M=D
+
+        // retAddr = *(frame - 5)
+        D=D-1
+        D=D-1
+        D=D-1
+        D=D-1
+        D=D-1
+        @R14 // retAddr
+        M=D
+
+        // SP = ARG+1
+        ${pop(fileName).argument(0)}
+        @ARG
+        D=A
+        @SP
+        M=D+1
+
+        // THAT = *(frame - 1)
+        @R13
+        D=M
+        D=D-1
+        @THAT
+        M=D
+
+        // THIS = *(frame - 2)
+        @R13
+        D=M
+        D=D-1
+        D=D-1
+        @THAT
+        M=D
+
+        // ARG = *(frame - 3)
+        @R13
+        D=M
+        D=D-1
+        D=D-1
+        D=D-1
+        @ARG
+        M=D
+
+         // LCL = *(frame - 4)
+        @R13
+        D=M
+        D=D-1
+        D=D-1
+        D=D-1
+        D=D-1
+        @LCL
+        M=D
+
+        // goto retAddr
+        @R14
+        A=M
+        0;JMP
+
+
+        `;
+    };
+
     return {
         label,
         goto,
         gotoIf,
+        fn,
+        rturn,
     };
 };

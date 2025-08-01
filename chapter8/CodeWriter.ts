@@ -1,5 +1,6 @@
 import { CommandType } from "./Parser.ts";
 import {
+    Branch,
     branch,
     comp,
     CompState,
@@ -16,11 +17,13 @@ import {
 export class CodeWriter {
     private compState: CompState = { count: 0 };
     private fileName?: string;
+    private branch: Branch = branch("no-name");
     constructor(private outputPath: string) {
     }
 
     public setFileName(fileName: string) {
         this.fileName = fileName;
+        this.branch = branch(this.fileName);
     }
 
     /**
@@ -110,7 +113,7 @@ export class CodeWriter {
      * @param label The label to write
      */
     public async writeLabel(label: string): Promise<void> {
-        const assembly = branch().label(label);
+        const assembly = this.branch.label(label);
         await Deno.writeTextFile(this.outputPath, assembly, { append: true });
     }
 
@@ -119,12 +122,22 @@ export class CodeWriter {
      * @param label The label we go-to
      */
     public async writeGoto(label: string): Promise<void> {
-        const assembly = branch().goto(label);
+        const assembly = this.branch.goto(label);
         await Deno.writeTextFile(this.outputPath, assembly, { append: true });
     }
 
     public async writeIf(label: string): Promise<void> {
-        const assembly = branch().gotoIf(label);
+        const assembly = this.branch.gotoIf(label);
+        await Deno.writeTextFile(this.outputPath, assembly, { append: true });
+    }
+
+    public async writeFunction(name: string, nVars: number) {
+        const assembly = this.branch.fn(name, nVars);
+        await Deno.writeTextFile(this.outputPath, assembly, { append: true });
+    }
+
+    public async writeReturn() {
+        const assembly = this.branch.rturn();
         await Deno.writeTextFile(this.outputPath, assembly, { append: true });
     }
 }
