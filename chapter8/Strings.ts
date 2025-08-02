@@ -371,16 +371,20 @@ export const branch = (fileName: string): Branch => {
     };
 
     const fn = (name: string, nVars: number): string => {
+        let initVars = "";
+        for(let i = 0; i < nVars; i++) {
+            initVars += push(fileName).constant(0) + "\n";
+            initVars += pop(fileName).local(i) + "\n";
+        }
+
         return stripIndent`
         // function ${name} ${nVars}
         (${fileName}.${name})
-        `.concat( // push nVars 0s onto the stack
-            new Array(nVars)
-                .fill(push(fileName).constant(0))
-                .join(""),
-        );
+        ${initVars}
+        `
     };
 
+    // TODO: Return is not setting things back correctly
     const rturn = () => {
         return stripIndent`
         // return
@@ -388,7 +392,7 @@ export const branch = (fileName: string): Branch => {
         // frame = LCL
         @LCL
         D=M
-        @R13 // frame
+        @R14 // frame
         M=D
 
         // retAddr = *(frame - 5)
@@ -397,52 +401,58 @@ export const branch = (fileName: string): Branch => {
         D=D-1
         D=D-1
         D=D-1
-        @R14 // retAddr
+        @R15 // retAddr
         M=D
 
-        // SP = ARG+1
+        // pop ARG 0
         ${pop(fileName).argument(0)}
+
+        // SP = ARG+1
         @ARG
-        D=A
+        D=M
         @SP
         M=D+1
 
         // THAT = *(frame - 1)
-        @R13
+        @R14
+        A=M
+        A=A-1
         D=M
-        D=D-1
         @THAT
         M=D
 
         // THIS = *(frame - 2)
-        @R13
+        @R14
+        A=M
+        A=A-1
+        A=A-1
         D=M
-        D=D-1
-        D=D-1
         @THAT
         M=D
 
         // ARG = *(frame - 3)
-        @R13
-        D=M
-        D=D-1
-        D=D-1
-        D=D-1
+        @R14
+        A=M
+        A=A-1
+        A=A-1
+        A=A-1
+        M=D
         @ARG
         M=D
 
          // LCL = *(frame - 4)
-        @R13
-        D=M
-        D=D-1
-        D=D-1
-        D=D-1
-        D=D-1
+        @R14
+        A=M
+        A=A-1
+        A=A-1
+        A=A-1
+        A=A-1
+        M=D
         @LCL
         M=D
 
         // goto retAddr
-        @R14
+        @R15
         A=M
         0;JMP
 

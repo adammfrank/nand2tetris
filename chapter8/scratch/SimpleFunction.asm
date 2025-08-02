@@ -8,6 +8,23 @@ A=M
 M=D
 @SP
 M=M+1
+
+// pop LCL 0
+@SP
+M=M-1
+@LCL
+D=M
+@0
+D=D+A
+@R13
+M=D
+@SP
+A=M 
+D=M
+@R13
+A=M
+M=D
+
 // push constant 0
 @0
 D=A
@@ -16,6 +33,22 @@ A=M
 M=D
 @SP
 M=M+1
+
+// pop LCL 1
+@SP
+M=M-1
+@LCL
+D=M
+@1
+D=D+A
+@R13
+M=D
+@SP
+A=M 
+D=M
+@R13
+A=M
+M=D
 // push local 0
 @0
 D=A
@@ -105,7 +138,7 @@ M=M+1
 // frame = LCL
 @LCL
 D=M
-@R13 // frame
+@R14 // frame
 M=D
 
 // retAddr = *(frame - 5)
@@ -114,10 +147,10 @@ D=D-1
 D=D-1
 D=D-1
 D=D-1
-@R14 // retAddr
+@R15 // retAddr
 M=D
 
-// SP = ARG+1
+// pop ARG 0
 // pop ARG 0
 @SP
 M=M-1
@@ -134,47 +167,53 @@ D=M
 A=M
 M=D
 
+
+// SP = ARG+1
 @ARG
-D=A
+D=M
 @SP
 M=D+1
 
 // THAT = *(frame - 1)
-@R13
+@R14
+A=M
+A=A-1
 D=M
-D=D-1
 @THAT
 M=D
 
 // THIS = *(frame - 2)
-@R13
+@R14
+A=M
+A=A-1
+A=A-1
 D=M
-D=D-1
-D=D-1
 @THAT
 M=D
 
 // ARG = *(frame - 3)
-@R13
-D=M
-D=D-1
-D=D-1
-D=D-1
+@R14
+A=M
+A=A-1
+A=A-1
+A=A-1
+M=D
 @ARG
 M=D
 
 // LCL = *(frame - 4)
-@R13
-D=M
-D=D-1
-D=D-1
-D=D-1
-D=D-1
+@R14
+A=M
+A=A-1
+A=A-1
+A=A-1
+A=A-1
+M=D
 @LCL
 M=D
 
 // goto retAddr
-@R14
+@R15
 A=M
 0;JMP
 // Infinite loop
