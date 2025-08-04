@@ -427,7 +427,7 @@ export const branch = (fileName: string): Branch => {
         A=A-1
         A=A-1
         D=M
-        @THAT
+        @THIS
         M=D
 
         // ARG = *(frame - 3)
@@ -436,7 +436,7 @@ export const branch = (fileName: string): Branch => {
         A=A-1
         A=A-1
         A=A-1
-        M=D
+        D=M
         @ARG
         M=D
 
@@ -447,7 +447,7 @@ export const branch = (fileName: string): Branch => {
         A=A-1
         A=A-1
         A=A-1
-        M=D
+        D=M
         @LCL
         M=D
 
@@ -455,8 +455,6 @@ export const branch = (fileName: string): Branch => {
         @R15
         A=M
         0;JMP
-
-
         `;
     };
 

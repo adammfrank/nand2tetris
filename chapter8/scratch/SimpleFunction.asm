@@ -188,7 +188,7 @@ A=M
 A=A-1
 A=A-1
 D=M
-@THAT
+@THIS
 M=D
 
 // ARG = *(frame - 3)
@@ -197,7 +197,7 @@ A=M
 A=A-1
 A=A-1
 A=A-1
-M=D
+D=M
 @ARG
 M=D
 
@@ -208,7 +208,7 @@ A=A-1
 A=A-1
 A=A-1
 A=A-1
-M=D
+D=M
 @LCL
 M=D
 
