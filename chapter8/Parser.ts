@@ -32,7 +32,7 @@ const commands: Record<string, CommandType> = {
     "if-goto": CommandType.C_IF,
     "function": CommandType.C_FUNCTION,
     "return": CommandType.C_RETURN,
-    // TODO: ADD THE REST
+    "call": CommandType.C_CALL
 };
 
 /**

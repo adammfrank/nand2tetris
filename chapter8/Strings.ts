@@ -326,18 +326,19 @@ export const comp = (compState: CompState) => {
     };
 };
 
-export const setup = () =>
-    stripIndent`// setup
-@256
-D=A
-@SP
-M=D
-`;
 
 export const end = () =>
     stripIndent`// Infinite loop
 @END
 0;JMP`;
+
+export const bootstrap = () => 
+    stripIndent`// Bootstrap
+    @256
+    D=A
+    @SP
+    M=D
+    call Sys.Init`;
 
 export interface Branch {
     label: (label: string) => string;
@@ -345,6 +346,7 @@ export interface Branch {
     gotoIf: (label: string) => string;
     fn: (name: string, nArgs: number) => string;
     rturn: () => string;
+    call: (name: string, nArgs: number) => string;
 }
 export const branch = (fileName: string): Branch => {
     const label = (label: string): string => {
@@ -458,11 +460,17 @@ export const branch = (fileName: string): Branch => {
         `;
     };
 
+    const call = (name: string, nArgs: number): string => {
+
+        return "";
+    }
+
     return {
         label,
         goto,
         gotoIf,
         fn,
         rturn,
+        call
     };
 };

@@ -1,5 +1,6 @@
 import { CommandType } from "./Parser.ts";
 import {
+bootstrap,
     Branch,
     branch,
     comp,
@@ -24,6 +25,14 @@ export class CodeWriter {
     public setFileName(fileName: string) {
         this.fileName = fileName;
         this.branch = branch(this.fileName);
+    }
+
+    public async bootstrap(): Promise<void> {
+       await Deno.writeTextFile(
+            this.outputPath,
+            bootstrap(),
+            { append: true },
+        ); 
     }
 
     /**
@@ -138,6 +147,11 @@ export class CodeWriter {
 
     public async writeReturn() {
         const assembly = this.branch.rturn();
+        await Deno.writeTextFile(this.outputPath, assembly, { append: true });
+    }
+
+    public async writeCall() {
+        const assembly = this.branch.call();
         await Deno.writeTextFile(this.outputPath, assembly, { append: true });
     }
 }
