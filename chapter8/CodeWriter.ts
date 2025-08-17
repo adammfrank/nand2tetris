@@ -31,7 +31,6 @@ export class CodeWriter {
        await Deno.writeTextFile(
             this.outputPath,
             bootstrap(),
-            { append: true },
         ); 
     }
 

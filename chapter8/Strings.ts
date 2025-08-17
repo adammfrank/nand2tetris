@@ -1,42 +1,42 @@
 function stripIndent(
-    strings: TemplateStringsArray,
-    ...values: unknown[]
+  strings: TemplateStringsArray,
+  ...values: unknown[]
 ): string {
-    const raw = strings
-        .map((str, i) => str + (values[i] ?? ""))
-        .join("");
+  const raw = strings
+    .map((str, i) => str + (values[i] ?? ""))
+    .join("");
 
-    // Split into lines, remove all leading spaces, and join
-    return raw
-        .split("\n")
-        .map((line) => line.trimStart()) // Remove all leading spaces
-        .join("\n")
-        .trim() // Remove leading and trailing empty lines
-        .concat("\n"); // Add new line at end;
+  // Split into lines, remove all leading spaces, and join
+  return raw
+    .split("\n")
+    .map((line) => line.trimStart()) // Remove all leading spaces
+    .join("\n")
+    .trim() // Remove leading and trailing empty lines
+    .concat("\n"); // Add new line at end;
 }
 
 const segments: Record<string, string> = {
-    "constant": "constant",
-    "local": "LCL",
-    "argument": "ARG",
-    "this": "THIS",
-    "that": "THAT",
-    "temp": "5",
+  "constant": "constant",
+  "local": "LCL",
+  "argument": "ARG",
+  "this": "THIS",
+  "that": "THAT",
+  "temp": "5",
 };
 
 export interface PushPop {
-    constant: (index: number | string) => string;
-    temp: (index: number) => string;
-    local: (index: number) => string;
-    argument: (index: number) => string;
-    this: (index: number) => string;
-    that: (index: number) => string;
-    pointer: (index: number) => string;
-    static: (index: number) => string;
+  constant: (index: number | string) => string;
+  temp: (index: number) => string;
+  local: (index: number) => string;
+  argument: (index: number) => string;
+  this: (index: number) => string;
+  that: (index: number) => string;
+  pointer: (index: number) => string;
+  static: (index: number) => string;
 }
 export const push = (fileName: string): PushPop => {
-    const template = (segment: string) => (index: number) =>
-        stripIndent`// push ${segment} ${index}
+  const template = (segment: string) => (index: number) =>
+    stripIndent`// push ${segment} ${index}
                        @${index}
                        D=A
                        @${segments[segment]}
@@ -49,9 +49,9 @@ export const push = (fileName: string): PushPop => {
                        M=M+1
                        `;
 
-    return {
-        constant: (index: number | string) =>
-            stripIndent`// push constant ${index}
+  return {
+    constant: (index: number | string) =>
+      stripIndent`// push constant ${index}
                        @${index}
                        D=A
                        @SP
@@ -60,9 +60,9 @@ export const push = (fileName: string): PushPop => {
                        @SP
                        M=M+1
                        `,
-        // Remember TEMP is different because TEMP[0] is RAM[5] not the address RAM[5] holds
-        temp: (index: number) =>
-            stripIndent`// push temp ${index}
+    // Remember TEMP is different because TEMP[0] is RAM[5] not the address RAM[5] holds
+    temp: (index: number) =>
+      stripIndent`// push temp ${index}
                        @${index}
                        D=A
                        @5 // temp starts at RAM[5]
@@ -74,12 +74,12 @@ export const push = (fileName: string): PushPop => {
                        @SP
                        M=M+1
             `,
-        local: template("local"),
-        argument: template("argument"),
-        this: template("this"),
-        that: template("that"),
-        pointer: (index: number) =>
-            stripIndent`// push pointer ${index}
+    local: template("local"),
+    argument: template("argument"),
+    this: template("this"),
+    that: template("that"),
+    pointer: (index: number) =>
+      stripIndent`// push pointer ${index}
                        @${index === 0 ? "THIS" : "THAT"}
                        D=M
                        @SP
@@ -88,8 +88,8 @@ export const push = (fileName: string): PushPop => {
                        @SP
                        M=M+1
                        `,
-        static: (index: number) =>
-            stripIndent`// push static ${index}
+    static: (index: number) =>
+      stripIndent`// push static ${index}
                         @${fileName}.${index}
                         D=M
                         @SP
@@ -98,12 +98,12 @@ export const push = (fileName: string): PushPop => {
                         @SP
                         M=M+1
                        `,
-    };
+  };
 };
 
 export const pop = (fileName: string): PushPop => {
-    const template = (segment: string) => (index: number) =>
-        stripIndent`// pop ${segment} ${index}
+  const template = (segment: string) => (index: number) =>
+    stripIndent`// pop ${segment} ${index}
                    @SP
                    M=M-1
                    @${segment}
@@ -120,17 +120,17 @@ export const pop = (fileName: string): PushPop => {
                    M=D
     `;
 
-    return {
-        constant: () => {
-            throw new Error("Pop Constant does not exist");
-        },
-        local: template("LCL"),
-        argument: template("ARG"),
-        this: template("THIS"),
-        that: template("THAT"),
-        // Remember TEMP is different because TEMP[0] is RAM[5] not the address RAM[5] holds
-        temp: (index: number) =>
-            stripIndent`// pop temp ${index}
+  return {
+    constant: () => {
+      throw new Error("Pop Constant does not exist");
+    },
+    local: template("LCL"),
+    argument: template("ARG"),
+    this: template("THIS"),
+    that: template("THAT"),
+    // Remember TEMP is different because TEMP[0] is RAM[5] not the address RAM[5] holds
+    temp: (index: number) =>
+      stripIndent`// pop temp ${index}
                    @SP
                    M=M-1
                    @5 // temp starts at RAM[5]
@@ -147,8 +147,8 @@ export const pop = (fileName: string): PushPop => {
                    M=D
                    
     `,
-        pointer: (index: number) =>
-            stripIndent`// pop pointer ${index}
+    pointer: (index: number) =>
+      stripIndent`// pop pointer ${index}
                    @SP
                    M=M-1
                    A=M
@@ -157,8 +157,8 @@ export const pop = (fileName: string): PushPop => {
                    M=D
                    
     `,
-        static: (index: number) =>
-            stripIndent`// pop static ${index}
+    static: (index: number) =>
+      stripIndent`// pop static ${index}
                            @SP
                            M=M-1
                            A=M
@@ -166,12 +166,12 @@ export const pop = (fileName: string): PushPop => {
                            @${fileName}.${index}
                            M=D
                            `,
-    };
+  };
 };
 
 export const logic = () => {
-    function template(operation: string, assembly: string) {
-        return stripIndent`
+  function template(operation: string, assembly: string) {
+    return stripIndent`
                    // ${operation}
                    @SP
                    M=M-1
@@ -184,23 +184,23 @@ export const logic = () => {
                    @SP
                    M=M+1
     `;
-    }
+  }
 
-    return {
-        add: () => template("add", "D+M"),
-        sub: () => template("sub", "M-D"),
-        or: () => template("or", "D|M"),
-        and: () => template("and", "D&M"),
-        neg: () =>
-            stripIndent`// neg
+  return {
+    add: () => template("add", "D+M"),
+    sub: () => template("sub", "M-D"),
+    or: () => template("or", "D|M"),
+    and: () => template("and", "D&M"),
+    neg: () =>
+      stripIndent`// neg
                    @SP
                    M=M-1
                    A=M
                    M=-M
                    @SP
                    M=M+1`,
-        not: () =>
-            stripIndent`// not
+    not: () =>
+      stripIndent`// not
                    @SP
                    M=M-1
                    A=M
@@ -208,18 +208,18 @@ export const logic = () => {
                    @SP
                    M=M+1
                    `,
-    };
+  };
 };
 
 export interface CompState {
-    count: number;
+  count: number;
 }
 
 export const comp = (compState: CompState) => {
-    const compCount = compState.count++;
-    return {
-        eq: () =>
-            stripIndent`// eq
+  const compCount = compState.count++;
+  return {
+    eq: () =>
+      stripIndent`// eq
                    @SP
                    M=M-1
                    A=M
@@ -253,8 +253,8 @@ export const comp = (compState: CompState) => {
 
                    (CONTINUE${compCount})
                    `,
-        lt: () =>
-            stripIndent`// lt
+    lt: () =>
+      stripIndent`// lt
                    @SP
                    M=M-1
                    A=M
@@ -288,8 +288,8 @@ export const comp = (compState: CompState) => {
 
                    (CONTINUE${compCount})
                    `,
-        gt: () =>
-            stripIndent`// gt
+    gt: () =>
+      stripIndent`// gt
                    @SP
                    M=M-1
                    A=M
@@ -323,45 +323,69 @@ export const comp = (compState: CompState) => {
 
                    (CONTINUE${compCount})
                    `,
-    };
+  };
 };
 
-
 export const end = () =>
-    stripIndent`// Infinite loop
+  stripIndent`// Infinite loop
 @END
 0;JMP`;
 
-export const bootstrap = () => 
-    stripIndent`// Bootstrap
+export const bootstrap = () =>
+  stripIndent`// Bootstrap
     @256
     D=A
     @SP
     M=D
-    call Sys.Init`;
+
+    ${push("").constant("LCL")}
+        ${push("").constant("ARG")}
+        ${push("").constant("THIS")}
+        ${push("").constant("THAT")}
+        @5
+        D=A
+        @R13 // 5 + 0 nArgs
+        M=D
+        @SP
+        D=M
+        @R13
+        D=D-M // D = SP - 5 
+        @ARG
+        M=D
+        @SP
+        D=M
+        @LCL
+        M=D
+        ${branch("").goto("Sys.init")}
+    `;
 
 export interface Branch {
-    label: (label: string) => string;
-    goto: (label: string) => string;
-    gotoIf: (label: string) => string;
-    fn: (name: string, nArgs: number) => string;
-    rturn: () => string;
-    call: (name: string, nArgs: number, callerName: string, returnIndex: number) => string;
+  label: (label: string) => string;
+  goto: (label: string) => string;
+  gotoIf: (label: string) => string;
+  fn: (name: string, nArgs: number) => string;
+  rturn: () => string;
+  call: (
+    name: string,
+    nArgs: number,
+    callerName: string,
+    returnIndex: number,
+  ) => string;
 }
 export const branch = (fileName: string): Branch => {
-    const label = (label: string): string => {
-        return stripIndent`// label ${label}
+  const label = (label: string): string => {
+    return stripIndent`// label ${label}
     (${label})`;
-    };
+  };
 
-    const goto = (label: string): string => {
-        return stripIndent`// go-to ${label}
+  const goto = (label: string): string => {
+    return stripIndent`// go-to ${label}
     @${label}
     0;JMP`;
-    };
+  };
 
-    const gotoIf = (label: string): string => {
-        return stripIndent`
+  const gotoIf = (label: string): string => {
+    return stripIndent`
             // go-to-if ${label}
             @SP
             M=M-1
@@ -370,25 +394,25 @@ export const branch = (fileName: string): Branch => {
             @${label}
             D;JNE
             `;
-    };
+  };
 
-    const fn = (name: string, nVars: number): string => {
-        let initVars = "";
-        for(let i = 0; i < nVars; i++) {
-            initVars += push(fileName).constant(0) + "\n";
-            initVars += pop(fileName).local(i) + "\n";
-        }
+  const fn = (name: string, nVars: number): string => {
+    let initVars = "";
+    for (let i = 0; i < nVars; i++) {
+      initVars += push(fileName).constant(0) + "\n";
+      initVars += pop(fileName).local(i) + "\n";
+    }
 
-        return stripIndent`
+    return stripIndent`
         // function ${name} ${nVars}
         (${name})
         ${initVars}
-        `
-    };
+        `;
+  };
 
-    // TODO: Return is not setting things back correctly
-    const rturn = () => {
-        return stripIndent`
+  // TODO: Return is not setting things back correctly
+  const rturn = () => {
+    return stripIndent`
         // return
 
         // frame = LCL
@@ -458,11 +482,15 @@ export const branch = (fileName: string): Branch => {
         A=M
         0;JMP
         `;
-    };
+  };
 
-    const call = (name: string, nArgs: number, callerName: string, returnIndex: number): string => {
-
-        return stripIndent`
+  const call = (
+    name: string,
+    nArgs: number,
+    callerName: string,
+    returnIndex: number,
+  ): string => {
+    return stripIndent`
         // call ${name} ${nArgs}
         ${push(fileName).constant(`${callerName}.$ret.${returnIndex}`)}
         ${push(fileName).constant("LCL")}
@@ -485,16 +513,17 @@ export const branch = (fileName: string): Branch => {
         D=M
         @LCL
         M=D
+        ${goto(name)}
         (${callerName}.$ret.${returnIndex})
         `;
-    }
+  };
 
-    return {
-        label,
-        goto,
-        gotoIf,
-        fn,
-        rturn,
-        call
-    };
+  return {
+    label,
+    goto,
+    gotoIf,
+    fn,
+    rturn,
+    call,
+  };
 };

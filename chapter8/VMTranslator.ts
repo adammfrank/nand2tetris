@@ -15,10 +15,6 @@ export class VMTranslator {
     if (await exists(inputFilePath, { isFile: false })) {
       inputDirectory = inputFilePath;
       outputDirectory = outputFilePath;
-      if (await exists(outputFilePath)) {
-        await Deno.remove(outputFilePath, { recursive: true });
-      }
-      await Deno.mkdir(outputDirectory);
       const files = Deno.readDirSync(inputFilePath);
       fileNames = files.map((file) => path.parse(file.name).name).toArray();
     } else {
@@ -32,13 +28,11 @@ export class VMTranslator {
     const outputPath = `${outputDirectory}${outputFileName}`;
     console.log(outputPath);
     const codeWriter = new CodeWriter(outputPath);
+    codeWriter.bootstrap();
 
 
     for (const fileName of fileNames) {
       const inputFile = await Deno.open(`${inputDirectory}/${fileName}.vm`);
-      await Deno.writeTextFile(`${outputDirectory}${fileName}.asm`, "", {
-        create: true,
-      });
 
       const parser = new Parser(inputFile);
       // TODO: include base directory
