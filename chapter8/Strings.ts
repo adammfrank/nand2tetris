@@ -25,7 +25,7 @@ const segments: Record<string, string> = {
 };
 
 export interface PushPop {
-    constant: (index: number) => string;
+    constant: (index: number | string) => string;
     temp: (index: number) => string;
     local: (index: number) => string;
     argument: (index: number) => string;
@@ -50,7 +50,7 @@ export const push = (fileName: string): PushPop => {
                        `;
 
     return {
-        constant: (index: number) =>
+        constant: (index: number | string) =>
             stripIndent`// push constant ${index}
                        @${index}
                        D=A
@@ -346,7 +346,7 @@ export interface Branch {
     gotoIf: (label: string) => string;
     fn: (name: string, nArgs: number) => string;
     rturn: () => string;
-    call: (name: string, nArgs: number) => string;
+    call: (name: string, nArgs: number, callerName: string, returnIndex: number) => string;
 }
 export const branch = (fileName: string): Branch => {
     const label = (label: string): string => {
@@ -381,7 +381,7 @@ export const branch = (fileName: string): Branch => {
 
         return stripIndent`
         // function ${name} ${nVars}
-        (${fileName}.${name})
+        (${name})
         ${initVars}
         `
     };
@@ -460,9 +460,33 @@ export const branch = (fileName: string): Branch => {
         `;
     };
 
-    const call = (name: string, nArgs: number): string => {
+    const call = (name: string, nArgs: number, callerName: string, returnIndex: number): string => {
 
-        return "";
+        return stripIndent`
+        // call ${name} ${nArgs}
+        ${push(fileName).constant(`${callerName}.$ret.${returnIndex}`)}
+        ${push(fileName).constant("LCL")}
+        ${push(fileName).constant("ARG")}
+        ${push(fileName).constant("THIS")}
+        ${push(fileName).constant("THAT")}
+        @5
+        D=A
+        @${nArgs}
+        D=D+A
+        @R13 // 5 + nArgs
+        M=D
+        @SP
+        D=M
+        @R13
+        D=D-M // D = SP - (5 + nArgs)
+        @ARG
+        M=D
+        @SP
+        D=M
+        @LCL
+        M=D
+        (${callerName}.$ret.${returnIndex})
+        `;
     }
 
     return {

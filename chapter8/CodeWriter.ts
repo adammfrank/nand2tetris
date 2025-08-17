@@ -150,8 +150,8 @@ export class CodeWriter {
         await Deno.writeTextFile(this.outputPath, assembly, { append: true });
     }
 
-    public async writeCall() {
-        const assembly = this.branch.call();
+    public async writeCall(name: string, nArgs: number, callerName: string, returnIndex: number) {
+        const assembly = this.branch.call(name, nArgs, callerName, returnIndex);
         await Deno.writeTextFile(this.outputPath, assembly, { append: true });
     }
 }

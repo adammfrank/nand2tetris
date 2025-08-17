@@ -15,8 +15,8 @@ export class VMTranslator {
     if (await exists(inputFilePath, { isFile: false })) {
       inputDirectory = inputFilePath;
       outputDirectory = outputFilePath;
-      if(await exists(outputFilePath)) {
-        await Deno.remove(outputFilePath, {recursive: true});
+      if (await exists(outputFilePath)) {
+        await Deno.remove(outputFilePath, { recursive: true });
       }
       await Deno.mkdir(outputDirectory);
       const files = Deno.readDirSync(inputFilePath);
@@ -27,7 +27,12 @@ export class VMTranslator {
       fileNames = [path.parse(inputFilePath).name];
     }
 
-    console.log(fileNames);
+    const dirName = path.parse(inputDirectory).name;
+    const outputFileName = `${dirName}.asm`;
+    const outputPath = `${outputDirectory}${outputFileName}`;
+    console.log(outputPath);
+    const codeWriter = new CodeWriter(outputPath);
+
 
     for (const fileName of fileNames) {
       const inputFile = await Deno.open(`${inputDirectory}/${fileName}.vm`);
@@ -36,10 +41,13 @@ export class VMTranslator {
       });
 
       const parser = new Parser(inputFile);
-      const codeWriter = new CodeWriter(`${outputDirectory}${fileName}.asm`);
+      // TODO: include base directory
       codeWriter.setFileName(fileName);
 
       await parser.advance();
+
+      let currentFunctionName = "";
+      let returnIndex = 0;
 
       while (await parser.hasMoreLines()) {
         const commandType = parser.commandType();
@@ -70,6 +78,7 @@ export class VMTranslator {
         }
 
         if (commandType === CommandType.C_FUNCTION) {
+          currentFunctionName = parser.arg1();
           await codeWriter.writeFunction(
             parser.arg1(),
             parseInt(parser.arg2()),
@@ -77,7 +86,18 @@ export class VMTranslator {
         }
 
         if (commandType === CommandType.C_RETURN) {
+          returnIndex = 0;
           await codeWriter.writeReturn();
+        }
+
+        if (commandType === CommandType.C_CALL) {
+          returnIndex++;
+          await codeWriter.writeCall(
+            parser.arg1(),
+            parseInt(parser.arg2()),
+            currentFunctionName,
+            returnIndex,
+          );
         }
         await parser.advance();
       }
