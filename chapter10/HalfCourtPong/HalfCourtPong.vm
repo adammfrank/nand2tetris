@@ -1,0 +1,124 @@
+function HalfCourtPong.new 0
+    push constant 2
+    call Memory.alloc 1
+    pop pointer 0
+    push constant 0
+    push constant 0
+    push constant 60
+    push constant 10
+    call Paddle.new 4
+    pop this 0
+    push constant 0
+    pop this 1
+    push pointer 0
+    return
+function HalfCourtPong.dispose 0
+    push argument 0
+    pop pointer 0
+    push this 0
+    call Paddle.dispose 1
+    pop temp 0
+    push pointer 0
+    call Memory.deAlloc 1
+    pop temp 0
+    push constant 0
+    return
+function HalfCourtPong.movePaddle 0
+    push argument 0
+    pop pointer 0
+    push this 1
+    push constant 1
+    eq
+    not
+    if-goto HalfCourtPong_1
+    push this 0
+    call Paddle.moveLeft 1
+    pop temp 0
+    goto HalfCourtPong_0
+label HalfCourtPong_1
+label HalfCourtPong_0
+    push this 1
+    push constant 2
+    eq
+    not
+    if-goto HalfCourtPong_3
+    push this 0
+    call Paddle.moveRight 1
+    pop temp 0
+    goto HalfCourtPong_2
+label HalfCourtPong_3
+label HalfCourtPong_2
+    push constant 5
+    call Sys.wait 1
+    pop temp 0
+    push constant 0
+    return
+function HalfCourtPong.run 2
+    push argument 0
+    pop pointer 0
+    push constant 0
+    pop local 1
+label HalfCourtPong_4
+    push local 1
+    not
+    not
+    if-goto HalfCourtPong_5
+label HalfCourtPong_6
+    push local 0
+    push constant 0
+    eq
+    not
+    if-goto HalfCourtPong_7
+    call Keyboard.keyPressed 0
+    pop local 0
+    goto HalfCourtPong_6
+label HalfCourtPong_7
+    push local 0
+    push constant 81
+    eq
+    not
+    if-goto HalfCourtPong_9
+    push constant 1
+    neg
+    pop local 1
+    goto HalfCourtPong_8
+label HalfCourtPong_9
+label HalfCourtPong_8
+    push local 0
+    push constant 130
+    eq
+    not
+    if-goto HalfCourtPong_11
+    push constant 1
+    pop this 1
+    goto HalfCourtPong_10
+label HalfCourtPong_11
+label HalfCourtPong_10
+    push local 0
+    push constant 132
+    eq
+    not
+    if-goto HalfCourtPong_13
+    push constant 2
+    pop this 1
+    goto HalfCourtPong_12
+label HalfCourtPong_13
+label HalfCourtPong_12
+label HalfCourtPong_14
+    push local 0
+    push constant 0
+    eq
+    not
+    not
+    if-goto HalfCourtPong_15
+    call Keyboard.keyPressed 0
+    pop local 0
+    push pointer 0
+    call HalfCourtPong.movePaddle 1
+    pop temp 0
+    goto HalfCourtPong_14
+label HalfCourtPong_15
+    goto HalfCourtPong_4
+label HalfCourtPong_5
+    push constant 0
+    return

@@ -339,24 +339,24 @@ export const bootstrap = () =>
     M=D
 
     ${push("").constant("LCL")}
-        ${push("").constant("ARG")}
-        ${push("").constant("THIS")}
-        ${push("").constant("THAT")}
-        @5
-        D=A
-        @R13 // 5 + 0 nArgs
-        M=D
-        @SP
-        D=M
-        @R13
-        D=D-M // D = SP - 5 
-        @ARG
-        M=D
-        @SP
-        D=M
-        @LCL
-        M=D
-        ${branch("").goto("Sys.init")}
+    ${push("").constant("ARG")}
+    ${push("").constant("THIS")}
+    ${push("").constant("THAT")}
+    @5
+    D=A
+    @R13 // 5 + 0 nArgs
+    M=D
+    @SP
+    D=M
+    @R13
+    D=D-M // D = SP - 5 
+    @ARG
+    M=D
+    @SP
+    D=M
+    @LCL
+    M=D
+    ${branch("").goto("Sys.init")}
     `;
 
 export interface Branch {

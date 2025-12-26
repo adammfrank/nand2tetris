@@ -1,0 +1,89 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+
+/** Implements a graphical paddle. */
+class Paddle {
+
+   field int x, y; // screen location of the paddle's top-left corner
+   field int length; // length of this paddle, in pixels
+   field int width;
+
+   /** Constructs a new paddle with a given location and size. */
+   constructor Paddle new(int Ax, int Ay, int Alength, int Awidth) {
+      let x = Ax;
+      let y = Ay;
+      let length = Alength;
+      let width = Awidth;
+      do draw();
+      return this;
+   }
+
+   /** Disposes this paddle. */
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /** Draws the paddle on the screen. */
+   method void draw() {
+      do Screen.setColor(true);
+      do Screen.drawRectangle(x, y, x + length, y + width);
+      return;
+   }
+
+   /** Erases the paddle from the screen. */
+   method void erase() {
+      do Screen.setColor(false);
+      do Screen.drawRectangle(x, y, x + length, y + width);
+      return;
+   }
+
+   /** Moves the paddle up by 2 pixels. */
+   method void moveUp() {
+      if (y > 1) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle(x, (y + width) - 1, x + length, y + width);
+         let y = y - 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle(x, y, x + length, y + 1);
+      }
+      return;
+   }
+
+   /** Moves the paddle down by 2 pixels. */
+   method void moveDown() {
+      if ((y + width) < 254) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle(x, y, x + length, y + 1);
+         let y = y + 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle(x, (y + width) - 1, x + length, y + width);
+      }
+      return;
+   }
+
+   /** Moves the paddle left by 2 pixels. */
+   method void moveLeft() {
+      if (x > 1) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle((x + length) - 1, y, x + length, y + width);
+         let x = x - 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle(x, y, x + 1, y + width);
+      }
+      return;
+   }
+
+   /** Moves the paddle right by 2 pixels. */
+   method void moveRight() {
+      if ((x + length) < 510) {
+         do Screen.setColor(false);
+         do Screen.drawRectangle(x, y, x + 1, y + width);
+         let x = x + 2;
+         do Screen.setColor(true);
+         do Screen.drawRectangle((x + length) - 1, y, x + length, y + width);
+      }
+      return;
+   }
+}

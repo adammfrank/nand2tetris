@@ -12,7 +12,7 @@ export class VMTranslator {
     let fileNames: string[];
     let inputDirectory: string;
     let outputDirectory: string;
-    if (await exists(inputFilePath, { isFile: false })) {
+    if (await exists(inputFilePath, { isDirectory: true })) {
       inputDirectory = inputFilePath;
       outputDirectory = outputFilePath;
       const files = Deno.readDirSync(inputFilePath);
@@ -26,7 +26,6 @@ export class VMTranslator {
     const dirName = path.parse(inputDirectory).name;
     const outputFileName = `${dirName}.asm`;
     const outputPath = `${outputDirectory}${outputFileName}`;
-    console.log(outputPath);
     const codeWriter = new CodeWriter(outputPath);
     codeWriter.bootstrap();
 
