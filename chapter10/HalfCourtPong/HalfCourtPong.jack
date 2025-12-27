@@ -13,6 +13,7 @@
  */
 class HalfCourtPong {
    field Paddle paddle; // the paddle of this game
+   field Ball ball;
    field int paddleDirection; // the paddle's current direction: 
                         // 0=none, 1=up, 2=down, 3=left, 4=right
 
@@ -22,6 +23,12 @@ class HalfCourtPong {
       // of the screen.
       let paddle = Paddle.new(0, 0, 60, 10);
       let paddleDirection = 0;  // initial state is no movement
+
+      let ball = Ball.new(50, 50, 20);
+
+      do ball.setXSpeed(25);
+      do ball.setYSpeed(25);
+
       return this;
    }
 
@@ -40,6 +47,37 @@ class HalfCourtPong {
       return;
    }
 
+   method void moveBall() {
+    var int x;
+    var int y;
+    var int radius;
+    var boolean leftEdgeReached;
+    var boolean rightEdgeReached;
+    var boolean topEdgeReached;
+    var boolean bottomEdgeReached;
+    
+    let x = ball.getX();
+    let y = ball.getY();
+    let radius = ball.getRadius();
+    
+    let leftEdgeReached = ~((ball.getX() - radius + ball.getXSpeed()) > 0) & ball.getXSpeed() < 0;
+    let rightEdgeReached = ~((ball.getX() + radius + ball.getXSpeed()) < 510) & ball.getXSpeed() > 0;
+
+    if(leftEdgeReached | rightEdgeReached) {
+        do ball.bounceX();
+    }
+
+    let topEdgeReached = ~((ball.getY() - radius + ball.getYSpeed()) > 0) & ball.getYSpeed() < 0;
+    let bottomEdgeReached = ~((ball.getY() + radius + ball.getYSpeed()) < 254) & ball.getYSpeed() > 0;
+
+    if(topEdgeReached | bottomEdgeReached) {
+        do ball.bounceY();
+    }
+
+    do ball.move();
+    return;
+   }
+
    /** Runs the game: handles the user's inputs and moves the paddle accordingly */
    method void run() {
       var char key;  // the key currently pressed by the user
@@ -50,7 +88,10 @@ class HalfCourtPong {
          // waits for a key to be pressed
          while (key = 0) {
             let key = Keyboard.keyPressed();
+            do moveBall();
          }
+
+         
          if (key = 81)  { let exit = true; }     // q key
          if (key = 130) { let paddleDirection = 1; }   // left arrow
          if (key = 132) { let paddleDirection = 2; }   // right arrow
@@ -59,6 +100,7 @@ class HalfCourtPong {
          while (~(key = 0)) {
             let key = Keyboard.keyPressed();
             do movePaddle();
+            do moveBall();
          }
      } // while
      return;

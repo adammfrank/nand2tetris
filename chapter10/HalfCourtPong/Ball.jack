@@ -1,3 +1,85 @@
 class Ball {
-    
+
+   field int x, y; // screen location of the ball's top-left corner
+   field int radius; // radius of this ball, in pixels
+   field int xSpeed;
+   field int ySpeed;
+
+   constructor Ball new(int Ax, int Ay, int Aradius) {
+      let x = Ax;
+      let y = Ay;
+      let xSpeed = 0;
+      let ySpeed = 0;
+      let radius = Aradius;
+      do draw();
+      return this;
+   }
+
+   method void dispose() {
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   method void draw() {
+      do Screen.setColor(true);
+      do Screen.drawCircle(x, y, radius);
+      return;
+   }
+
+   /** Erases the paddle from the screen. */
+   method void erase() {
+      do Screen.setColor(false);
+      do Screen.drawCircle(x, y, radius);
+      return;
+   }
+
+   method void setXSpeed(int speed) {
+    let xSpeed = speed;
+    return;
+   }
+
+   method void setYSpeed(int speed) {
+    let ySpeed = speed;
+    return;
+   }
+
+   method int getXSpeed() {
+    return xSpeed;
+   }
+
+   method int getYSpeed() {
+    return ySpeed;
+   }
+
+   method int getX() {
+    return x;
+   }
+
+   method int getY() {
+    return y;
+   }
+
+   method int getRadius() {
+    return radius;
+   }
+
+   method void bounceX() {
+    let xSpeed = -xSpeed;
+    return;
+   }
+
+   method void bounceY() {
+    let ySpeed = -ySpeed;
+    return;
+   }
+
+   method void move() {
+        do Screen.setColor(false);
+        do Screen.drawCircle(x, y, radius);
+        do Screen.setColor(true);
+        let x = x + xSpeed;
+        let y = y + ySpeed;
+        do Screen.drawCircle(x, y, radius);
+        return;
+   }
 }
