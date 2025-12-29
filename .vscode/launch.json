@@ -18,6 +18,36 @@
                 "--allow-all"
             ],
             "attachSimplePort": 9229
+        },
+        {
+            "request": "launch",
+            "name": "Debug Chapter 10 Spec (current file)",
+            "type": "node",
+            "program": "${file}",
+            "cwd": "${workspaceFolder}/chapter10",
+            "env": {},
+            "runtimeExecutable": "deno",
+            "runtimeArgs": [
+                "test",
+                "--inspect-wait",
+                "--allow-all"
+            ],
+            "attachSimplePort": 9229
+        },
+        {
+            "request": "launch",
+            "name": "Debug Chapter 10 All Tests",
+            "type": "node",
+            "cwd": "${workspaceFolder}/chapter10",
+            "env": {},
+            "runtimeExecutable": "deno",
+            "runtimeArgs": [
+                "test",
+                "--inspect-wait",
+                "--allow-all",
+                "test"
+            ],
+            "attachSimplePort": 9229
         }
     ]
 }

@@ -1,4 +1,16 @@
 {
+  // Enable Deno features (including Testing integration) for this workspace
+  "deno.enable": true,
+  // Optional: enable unstable APIs if needed by std testing
+  "deno.unstable": true,
+  // Make Deno the language server for TypeScript in this workspace
+  "deno.lint": true,
+  "deno.suggest.imports.hosts": {
+    "https://deno.land": true,
+    "https://jsr.io": true
+  }
+}
+{
     "deno.enable": true,
     "deno.codeLens.test": true,
     "deno.lint": true
