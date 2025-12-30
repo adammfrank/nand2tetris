@@ -1,24 +1,40 @@
 import { TokenException } from "./Errors.ts";
 import { KeywordMap, Patterns, Token, TokenType, Keyword } from "./Tokens.ts";
 
+const CommentPatterns = [
+  /\/\/.*(?:\r\n|\r|\n)?/g,            // line comments // ... (single line) + trailing newline
+  /\/\*\*[\s\S]*?\*\/(?:\r\n|\r|\n)?/g, // doc comments /** ... */ (multi-line) + trailing newline
+  /\/\*[\s\S]*?\*\/(?:\r\n|\r|\n)?/g     // block comments /* ... */ (multi-line) + trailing newline
+];
+
 export class JackTokenizer {
   private position: number;
   public currentToken: Token = new Token(TokenType.NONE, "");
+  private text: string = "";
 
-  constructor(private input: string) {
+  constructor(input: string) {
+    this.text = input.replaceAll(CommentPatterns[0], "")
+    .replaceAll(CommentPatterns[1], "")
+    .replaceAll(CommentPatterns[2], "");
+
     this.position = 0;
   }
 
   private remainder(): string {
-    return this.input.substring(this.position);
+    return this.text.substring(this.position);
   }
 
   hasMoreTokens(): boolean {
-    return this.remainder().length > 0;
+    return this.remainder().trim().length > 0;
   }
 
   // Run all regexs on remainder, return first/longest match
   advance(): void {
+    const whitespaceMatches = this.remainder().match(/^\s+/);
+    if(whitespaceMatches != null) {
+        this.position += whitespaceMatches[0].length;
+    }
+
     for (const [pattern, type] of Patterns) {
       const matches = this.remainder().match(pattern);
       if (matches != null) {

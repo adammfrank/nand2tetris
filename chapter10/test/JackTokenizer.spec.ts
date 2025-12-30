@@ -1,4 +1,4 @@
-import { beforeEach, describe, it, test } from "jsr:@std/testing/bdd";
+import { describe, test } from "jsr:@std/testing/bdd";
 import { expect } from "jsr:@std/expect/expect";
 import { JackTokenizer } from "../JackTokenizer.ts";
 import { TokenType } from "../Tokens.ts";

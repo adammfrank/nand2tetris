@@ -87,7 +87,7 @@ export const Patterns: [RegExp, TokenType][] = [
     [/^\)/, TokenType.SYMBOL],
     [/^\[/, TokenType.SYMBOL],
     [/^]/, TokenType.SYMBOL],
-    [/^./, TokenType.SYMBOL],
+    [/^\./, TokenType.SYMBOL],
     [/^,/, TokenType.SYMBOL],
     [/^;/, TokenType.SYMBOL],
     [/^\+/, TokenType.SYMBOL],
@@ -95,12 +95,12 @@ export const Patterns: [RegExp, TokenType][] = [
     [/^\*/, TokenType.SYMBOL],
     [/^\//, TokenType.SYMBOL],
     [/^&/, TokenType.SYMBOL],
-    [/^|/, TokenType.SYMBOL],
+    [/^\|/, TokenType.SYMBOL],
     [/^</, TokenType.SYMBOL],
     [/^>/, TokenType.SYMBOL],
     [/^=/, TokenType.SYMBOL],
     [/^~/, TokenType.SYMBOL],
-    [/^[0-32767]/,TokenType.INT_CONST],
-    [/^"[^"\\n]"/, TokenType.STRING_CONST],
-    [/^[a-zA-Z_]+\w*/, TokenType.IDENTIFIER]
+    [/(^[0-32767])/,TokenType.INT_CONST],
+    [/(^"[^"\\n]")/, TokenType.STRING_CONST],
+    [/(^[a-zA-Z_]+\w*)/, TokenType.IDENTIFIER]
 ];
