@@ -81,6 +81,7 @@ export const Patterns: [RegExp, TokenType][] = [
     [/^true/, TokenType.KEYWORD],
     [/^false/, TokenType.KEYWORD],
     [/^null/, TokenType.KEYWORD],
+    [/^this/, TokenType.KEYWORD],
     [/^{/, TokenType.SYMBOL],
     [/^}/, TokenType.SYMBOL],
     [/^\(/, TokenType.SYMBOL],
